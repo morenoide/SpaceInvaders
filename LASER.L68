@@ -1,0 +1,105 @@
+00001194 Starting Address
+Assembler used: EASy68K Editor/Assembler v5.16.01
+Created On: 02/02/2023 19:25:47
+
+00000000                             1  *-----------------------------------------------------------
+00000000                             2  ; LASER
+00000000                             3  *-----------------------------------------------------------
+00000000                             4  LASINIT
+00000000                             5  ; INICIALIZAR EL LASER
+00000000                             6  ; INPUT     : NONE
+00000000                             7  ; OUTPUT    : NONE
+00000000                             8  ; MODIFIES  : NONE
+00000000                             9  ; ----------------------------------------------------------
+Line 10 ERROR: Comma expected
+00000000                            10      MOVE.W  #SCRWIDTH/2,(LASPOSX)
+Line 11 ERROR: Comma expected
+00000000                            11      MOVE.W  #PJY-LASY,(LASPOSY)
+Line 12 ERROR: Undefined symbol
+00000000  33FC BD16 005455B8        12      MOVE.W  #LASSPEED,(LASVELY)
+00000008  4E75                      13      RTS
+0000000A                            14      
+Line 15 ERROR: Symbol value differs between first and second pass
+0000000A                            15  LASUPD
+0000000A                            16  ; ACTUALIZAR EL LASER
+0000000A                            17  ; INPUT     : NONE
+0000000A                            18  ; OUTPUT    : NONE
+0000000A                            19  ; MODIFIES  : NONE
+0000000A                            20  ; ----------------------------------------------------------
+0000000A                            21  
+0000000A                            22      ;ACTUALIZAR POSICION LASER
+Line 23 ERROR: Undefined symbol
+0000000A  3039 004DBD16             23      MOVE.W  (LASPOSY),D0
+Line 24 ERROR: Undefined symbol
+00000010  9079 004DBD16             24      SUB.W   (LASVELY),D0
+00000016                            25      
+00000016                            26      ;DETECTAR COLISIONES
+00000016                            27      
+00000016                            28      ;GUARDAR POSICION
+Line 29 ERROR: Undefined symbol
+00000016  33C0 005455B8             29      MOVE.W  D0,(LASPOSY)
+0000001C                            30      
+0000001C                            31      
+0000001C  4E75                      32      RTS
+0000001E                            33      
+Line 34 ERROR: Symbol value differs between first and second pass
+0000001E                            34  LASPLOT
+0000001E                            35  ; ACTUALIZAR GRAFICAMENTE EL SALER
+0000001E                            36  ; INPUT     : NONE
+0000001E                            37  ; OUTPUT    : NONE
+0000001E                            38  ; MODIFIES  : NONE
+0000001E                            39  ; ----------------------------------------------------------
+0000001E                            40  
+0000001E  48E7 F800                 41      MOVEM.L D0-D4,-(A7)
+00000022                            42      
+00000022                            43      ;DEFINIR COLOR CONTORNO
+00000022  103C 0050                 44      MOVE.B  #80,D0
+Line 45 ERROR: Undefined symbol
+00000026  223C 004DBD16             45      MOVE.L  #LASCOLOR,D1
+0000002C  4E4F                      46      TRAP    #15
+0000002E                            47                          
+0000002E                            48      ;DEFINIR COLOR RELLENO
+0000002E  103C 0051                 49      MOVE.B  #81,D0
+Line 50 ERROR: Undefined symbol
+00000032  223C 004DBD16             50      MOVE.L  #LASFILL,D1
+00000038  4E4F                      51      TRAP    #15
+0000003A                            52      
+0000003A                            53      ;DEFINIR COORDENADAS
+0000003A                            54              
+0000003A                            55          ;DEFINIR ANCHURA LASER
+Line 56 ERROR: Undefined symbol
+0000003A  3239 004DBD16             56      MOVE.W  (LASPOSX),D1
+Line 57 ERROR: Comma expected
+00000040                            57      SUB.W   #LASX/2,D1
+00000040  3601                      58      MOVE.W  D1,D3
+Line 59 ERROR: Undefined symbol
+00000042  0643 BD16                 59      ADD.W   #LASX,D3
+00000046                            60              
+00000046                            61          ;DEFINIR ALTURA LASER
+Line 62 ERROR: Undefined symbol
+00000046  3439 004DBD16             62      MOVE.W  (LASPOSY),D2
+Line 63 ERROR: Comma expected
+0000004C                            63      SUB.W   #LASY/2,D2
+0000004C  3802                      64      MOVE.W  D2,D4
+Line 65 ERROR: Undefined symbol
+0000004E  0644 BD16                 65      ADD.W   #LASY,D4
+00000052                            66              
+00000052                            67              ;DIBUJAR RECTANGULO
+00000052  103C 0057                 68      MOVE.B  #87,D0
+00000056  4E4F                      69      TRAP    #15
+00000058                            70  
+00000058  4CDF 001F                 71      MOVEM.L (A7)+,D0-D4
+0000005C                            72      
+0000005C  4E75                      73      RTS
+Line 74 WARNING: END directive missing, starting address not set
+
+16 errors detected
+1 warning generated
+
+
+SYMBOL TABLE INFORMATION
+Symbol-name         Value
+-------------------------
+LASINIT             0
+LASPLOT             2E
+LASUPD              1A

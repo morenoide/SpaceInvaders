@@ -1,0 +1,85 @@
+000010F6 Starting Address
+Assembler used: EASy68K Editor/Assembler v5.16.01
+Created On: 01/02/2023 22:32:24
+
+00000000                             1  *-----------------------------------------------------------
+00000000                             2  ; JUGADOR
+00000000                             3  *-----------------------------------------------------------
+00000000                             4  
+00000000                             5  ; ----------------------------------------------------------
+00000000                             6  PJINIT
+00000000                             7  ; INICIALIZAR EL PALA DEL JUGADOR
+00000000                             8  ; INPUT     : NONE
+00000000                             9  ; OUTPUT    : NONE
+00000000                            10  ; MODIFIES  : NONE
+00000000                            11  ; ----------------------------------------------------------
+Line 12 ERROR: Comma expected
+00000000                            12              MOVE.W #SCRWIDTH/2,(LASPOSX)
+00000000  4E75                      13              RTS
+00000002                            14      
+Line 15 ERROR: Symbol value differs between first and second pass
+00000002                            15  PJUPD
+00000002                            16  ; ACTUALIZAR EL JUGADOR
+00000002                            17  ; INPUT     : NONE
+00000002                            18  ; OUTPUT    : NONE
+00000002                            19  ; MODIFIES  : NONE
+00000002                            20  ; ----------------------------------------------------------
+00000002  4E75                      21              RTS
+00000004                            22      
+Line 23 ERROR: Symbol value differs between first and second pass
+00000004                            23  PJPLOT
+00000004                            24  ; ACTUALIZAR GRAFICAMENTE AL JUGADOR
+00000004                            25  ; INPUT     : NONE
+00000004                            26  ; OUTPUT    : NONE
+00000004                            27  ; MODIFIES  : NONE
+00000004                            28  ; ----------------------------------------------------------
+00000004                            29  
+00000004                            30              ;MOVEM.L D0-D4,-(A7)
+00000004                            31  
+00000004                            32              ;DEFINIR COLOR CONTORNO
+00000004  103C 0050                 33              MOVE.B  #80,D0
+Line 34 ERROR: Undefined symbol
+00000008  223C 004DBD16             34              MOVE.L  #PJCOLOR,D1
+0000000E  4E4F                      35              TRAP    #15
+00000010                            36                          
+00000010                            37              ;DEFINIR COLOR RELLENO
+00000010  103C 0050                 38              MOVE.B  #80,D0
+Line 39 ERROR: Undefined symbol
+00000014  223C 004DBD16             39              MOVE.L  #PJFILL,D1
+0000001A  4E4F                      40              TRAP    #15
+0000001C                            41              
+0000001C                            42              ;DEFINIR COORDENADAS
+0000001C                            43              ;MOVE.W  #PJY-PJANCHO/2,D1
+0000001C                            44              ;MOVE.W  #PJY-PJANCHO/2,D3
+0000001C                            45              ;MOVE.W  (PJPOSX),D2
+0000001C                            46              ;SUB.W   #PJALTO/2,D2
+0000001C                            47              ;MOVE.W  D2,D4
+0000001C                            48              ;ADD.W   #PJALTO,D4
+0000001C                            49              
+0000001C  323C 0064                 50              MOVE.W  #100,D1
+00000020  343C 00C8                 51              MOVE.W  #200,D2
+00000024  363C 0064                 52              MOVE.W  #100,D3
+00000028  383C 00C8                 53              MOVE.W  #200,D4
+0000002C                            54              
+0000002C                            55              ;DIBUJAR RECTANGULO
+0000002C  103C 0057                 56              MOVE.B  #87,D0
+00000030  4E4F                      57              TRAP    #15
+00000032                            58              
+00000032                            59              ;MOVEM.L  (A7)+,D0-D4
+00000032                            60              
+00000032  4E75                      61              RTS
+00000034                            62              
+00000034                            63              
+00000034                            64              
+Line 65 WARNING: END directive missing, starting address not set
+
+5 errors detected
+1 warning generated
+
+
+SYMBOL TABLE INFORMATION
+Symbol-name         Value
+-------------------------
+PJINIT              0
+PJPLOT              C
+PJUPD               A

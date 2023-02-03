@@ -1,0 +1,103 @@
+00001184 Starting Address
+Assembler used: EASy68K Editor/Assembler v5.16.01
+Created On: 03/02/2023 15:58:29
+
+00000000                             1  *-----------------------------------------------------------
+00000000                             2  ; SYSTEM
+00000000                             3  *-----------------------------------------------------------
+00000000                             4  
+00000000                             5  ; ----------------------------------------------------------
+00000000                             6  SYSINIT
+00000000                             7  ; INICIALIZAR EL SISTEMA
+00000000                             8  ; INPUT     : NONE
+00000000                             9  ; OUTPUT    : NONE
+00000000                            10  ; MODIFIES  : NONE
+00000000                            11  ; ----------------------------------------------------------
+00000000  4EB9 00000016             12      JSR        SCRINIT
+00000006                            13      
+00000006                            14      ;METER EN EL TRAP 0 LA RUTINA PARA ACTUALIZAR LA PANTALLA
+00000006  21FC 00000044 0080        15      MOVE.L  #SCRPLOT,($80)
+0000000E                            16              
+0000000E  40E7                      17      MOVE.W  SR,-(A7)
+00000010  0257 DFFF                 18      ANDI.W  #$DFFF,(A7)
+00000014  4E73                      19      RTE
+00000016                            20      
+00000016                            21  ; ----------------------------------------------------------
+00000016                            22  SCRINIT
+00000016                            23  ; INIT RESOLUCION PANTALLA, PONER MODO VENTANA, BORRAR PANTALLA
+00000016                            24  ; ENABLE DOBLE BUFFER
+00000016                            25  ; INPUT     : NONE
+00000016                            26  ; OUTPUT    : NONE
+00000016                            27  ; MODIFIES  : D0-D1
+00000016                            28  ; ----------------------------------------------------------
+00000016                            29          
+00000016                            30          ;GUARDAR PARA RESTAURAR LUEGO LOS REGISTROS QUE MODIFICAMOS
+00000016  48E7 C000                 31          MOVEM.L D0-D1,-(A7)
+0000001A                            32  
+0000001A                            33          ;INIT RESOLUCION PANTALLA
+0000001A  103C 0021                 34          MOVE.B  #33,D0
+Line 35 ERROR: Invalid syntax
+0000001E                            35          MOVE.L  #SCRWIDTH<<16|SCRHEIGHT,D1
+0000001E  4E4F                      36          TRAP    #15
+00000020                            37          
+00000020                            38          ;DEFINIR MODO VENTANA
+00000020  7201                      39          MOVE.L  #1,D1
+00000022  4E4F                      40          TRAP    #15
+00000024                            41          
+00000024                            42          ;BORRAR PANTALLA
+00000024  103C 000B                 43          MOVE.B  #11,D0
+00000028  323C FF00                 44          MOVE.W  #$FF00,D1
+0000002C  4E4F                      45          TRAP    #15
+0000002E                            46          
+0000002E                            47          ;ENABLE DOBLE BUFFER
+0000002E  103C 005C                 48          MOVE.B  #92,D0
+00000032  123C 0011                 49          MOVE.B  #17,D1
+00000036  4E4F                      50          TRAP    #15
+00000038                            51          
+00000038                            52          
+00000038                            53          ;RESTAURAR LOS REGISTROS A SU ESTADO ANTERIOR A MODIFICACION
+00000038  4CDF 0003                 54          MOVEM.L (A7)+,D0-D1
+0000003C                            55          
+0000003C  4E75                      56          RTS
+0000003E                            57  
+0000003E                            58  ; ----------------------------------------------------------
+Line 59 ERROR: Symbol value differs between first and second pass
+0000003E                            59  SCRPLOT
+0000003E                            60  ; ACTUALIZAR DOBLE BUFFER
+0000003E                            61  ; INPUT     : NONE
+0000003E                            62  ; OUTPUT    : NONE
+0000003E                            63  ; MODIFIES  : D0-D1
+0000003E                            64  ; ----------------------------------------------------------
+0000003E  48A7 C000                 65         MOVEM.W D0-D1,-(A7)
+00000042                            66         ; SWITCH BUFFERS
+00000042  103C 005E                 67         MOVE.B  #94,D0
+00000046  4E4F                      68         TRAP    #15
+00000048                            69                    
+00000048                            70          ; CLEAR HIDDEN BUFFER
+00000048  103C 000B                 71          MOVE.B  #11,D0
+0000004C  323C FF00                 72          MOVE.W  #$FF00,D1
+00000050  4E4F                      73          TRAP    #15
+00000052  4C9F 0003                 74          MOVEM.W (A7)+,D0-D1
+00000056                            75          
+00000056  4E73                      76          RTE
+00000058                            77  
+00000058                            78  
+00000058                            79  
+00000058                            80  
+00000058                            81  
+00000058                            82  
+00000058                            83  
+00000058                            84  
+00000058                            85  
+Line 86 WARNING: END directive missing, starting address not set
+
+2 errors detected
+1 warning generated
+
+
+SYMBOL TABLE INFORMATION
+Symbol-name         Value
+-------------------------
+SCRINIT             16
+SCRPLOT             44
+SYSINIT             0
