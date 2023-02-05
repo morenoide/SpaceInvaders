@@ -19,21 +19,29 @@ LASUPD
 ; MODIFIES  : NONE
 ; ----------------------------------------------------------
 
-    MOVEM.L D0,-(A7)
+            MOVEM.L D0-D1,-(A7)
     
-    ;ACTUALIZAR POSICION LASER
-    MOVE.W  (LASPOSY),D0
-    SUB.W   (LASVELY),D0
+            ;SI SE HA PULSADO LA TECLA SPACE, MOVER EL LASER A LA POSICION DEL JUGADOR
+            BTST.B  #4,(KBDEDGE)     ;SI SE HA PULSADO
+            BEQ     .SEGUIR
+            MOVE.W  (PJPOSX),D0
+            MOVE.W  D0,(LASPOSX)
+            MOVE.W  #PJY-PJALTO,D1
+            MOVE.W  D1,(LASPOSY)
     
-    ;DETECTAR COLISIONES
     
-    ;GUARDAR POSICION
-    MOVE.W  D0,(LASPOSY)
+            ;ACTUALIZAR POSICION LASER
+.SEGUIR     MOVE.W  (LASPOSY),D0
+            SUB.W   (LASVELY),D0
     
-    MOVEM.L (A7)+,D0
     
-    RTS
+            ;GUARDAR POSICION
+            MOVE.W  D0,(LASPOSY)
     
+            MOVEM.L (A7)+,D0-D1
+    
+            RTS
+
 LASPLOT
 ; ACTUALIZAR GRAFICAMENTE EL SALER
 ; INPUT     : NONE
@@ -74,6 +82,8 @@ LASPLOT
     MOVEM.L (A7)+,D0-D4
     
     RTS
+
+
 
 *~Font name~Courier New~
 *~Font size~12~

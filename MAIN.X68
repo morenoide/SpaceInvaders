@@ -18,16 +18,18 @@
     
 START:
 ; --- INICIALIZAR ------------------------------------------
-            JSR SYSINIT
-            JSR PJINIT
-            JSR SCOINIT
-            JSR LASINIT
-            JSR LASBINIT
+            ORI.W  #$0700,SR    ;DESACTIVAR INTERRUPCIONES
+            JSR     SYSINIT
+            JSR     PJINIT
+            JSR     SCOINIT
+            JSR     LASINIT
+            JSR     LASBINIT
 .LOOP
 
 ; --- UPDATE -----------------------------------------------
 
 ; LECTURA DISPOSITIVOS DE ENTRADA
+            TRAP    #KBDUPTN
 
 ; UPDATE GAME LOGIC
 
@@ -37,6 +39,9 @@ START:
 
 ; --- SYNCRONIZAR (PARA EL FRAMERATE) ----------------------
 
+.WINT       TST.B   (SCRINTCT)
+            BEQ     .WINT
+            CLR.B   (SCRINTCT)
 
 ; --- DIBUJAR PANTALLA -------------------------------------
 
@@ -45,7 +50,7 @@ START:
             JSR     LASBPLOT
             JSR     PJPLOT
             
-            TRAP    #0
+            TRAP    #SCRUPTN
             
             
             BRA     .LOOP
@@ -57,6 +62,8 @@ START:
             INCLUDE "SYSVAR.X68"    ; Variables sistema
 
             END    START            ; last line of source
+
+
 
 
 

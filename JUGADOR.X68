@@ -18,6 +18,33 @@ PJUPD
 ; OUTPUT    : NONE
 ; MODIFIES  : NONE
 ; ----------------------------------------------------------
+            
+            MOVE.W  D0,-(A7)
+            
+            ;ACTUALIZAR POSICION JUGADOR
+            MOVE.W  (PJPOSX),D0
+            BTST.B  #0,(KBDVAL)
+            BEQ     .CHKLEFT
+            SUB.W   #PJSPEED,D0
+.CHKLEFT    BTST.B  #2,(KBDVAL)
+            BEQ     .CONT
+            ADD.W   #PJSPEED,D0
+            
+            ;COLISIONES PARA QUE NO SE SALGA DE LA PANTALLA
+.CONT       CMP.W   #PJANCHO/2,D0
+            BGE     .CONT2
+            MOVE.W  #PJANCHO/2,D0
+            BRA     .DONE
+            
+.CONT2      CMP.W   #SCRWIDTH-PJANCHO/2,D0
+            BLE     .DONE
+            MOVE.W  #SCRWIDTH-PJANCHO/2,D0
+
+            ;ACTUALIZAR VARIABLE
+.DONE       MOVE.W  D0,(PJPOSX)
+
+            MOVE.W  (A7)+,D0            
+
             RTS
     
 PJPLOT
@@ -61,6 +88,7 @@ PJPLOT
             
             
             
+
 *~Font name~Courier New~
 *~Font size~12~
 *~Tab type~1~
