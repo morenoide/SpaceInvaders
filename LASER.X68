@@ -7,9 +7,9 @@ LASINIT
 ; OUTPUT    : NONE
 ; MODIFIES  : NONE
 ; ----------------------------------------------------------
-    MOVE.W  #SCRWIDTH/2,(LASPOSX)
-    MOVE.W  #PJY-LASY,(LASPOSY)
-    MOVE.W  #LASSPEED,(LASVELY)
+    MOVE.W  #SCRWIDTH/2,(LASPOSX)   ;DEFINIMOS X 
+    MOVE.W  #PJY-LASY,(LASPOSY) ;DEFINIMOS Y 
+    MOVE.W  #LASSPEED,(LASVELY) ;VELOCIDAD LASER
     RTS
     
 LASUPD
@@ -28,11 +28,12 @@ LASUPD
             MOVE.W  D0,(LASPOSX)
             MOVE.W  #PJY-PJALTO,D1
             MOVE.W  D1,(LASPOSY)
-    
+            ADDQ.W  #1,(SCOOUT)
     
             ;ACTUALIZAR POSICION LASER
 .SEGUIR     MOVE.W  (LASPOSY),D0
             SUB.W   (LASVELY),D0
+            
     
     
             ;GUARDAR POSICION

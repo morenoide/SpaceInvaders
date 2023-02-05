@@ -8,7 +8,7 @@ LASX        EQU     4               ; TAMAÑO X LASER
 LASY        EQU     16              ; TAMAÑO Y LASER
 LASCOLOR    EQU     $00ffffff       ; COLOR CONTORNO LASER
 LASFILL     EQU     $0000ffff       ; COLOR RELLENO LASER
-LASSPEED    EQU     3               ; VELOCIDAD LASER
+LASSPEED    EQU     8               ; VELOCIDAD LASER
 
 ; --- JUGADOR VARIABLES ------------------------------------
 
@@ -24,6 +24,7 @@ PJFILL      EQU     $000000FF       ; COLOR RELLENO JUGADOR
 SCOFILL     EQU     $00000000       ; TEXT BACKGROUND COLOR
 SCOLINE1    EQU     $0101           ; PRIMERA LINEA, SCORE ACTUAL
 SCOLINE2    EQU     $1001           ; SEGUNDA LINEA, SCORE MAX
+
 
 
 

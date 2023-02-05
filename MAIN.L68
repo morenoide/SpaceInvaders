@@ -1,6 +1,6 @@
-00001274 Starting Address
+000012A2 Starting Address
 Assembler used: EASy68K Editor/Assembler v5.16.01
-Created On: 05/02/2023 18:15:29
+Created On: 05/02/2023 20:13:14
 
 00000000                             1  *-----------------------------------------------------------
 00000000                             2  * Title      :
@@ -19,7 +19,7 @@ Created On: 05/02/2023 18:15:29
 00001000  =00000010                 15  LASY        EQU     16              ; TAMAÑO Y LASER
 00001000  =00FFFFFF                 16  LASCOLOR    EQU     $00ffffff       ; COLOR CONTORNO LASER
 00001000  =0000FFFF                 17  LASFILL     EQU     $0000ffff       ; COLOR RELLENO LASER
-00001000  =00000003                 18  LASSPEED    EQU     3               ; VELOCIDAD LASER
+00001000  =00000008                 18  LASSPEED    EQU     8               ; VELOCIDAD LASER
 00001000                            19  
 00001000                            20  ; --- JUGADOR VARIABLES ------------------------------------
 00001000                            21  
@@ -38,521 +38,560 @@ Created On: 05/02/2023 18:15:29
 00001000                            34  
 00001000                            35  
 00001000                            36  
-00001000                            37  -------------------- end include --------------------
-00001000                            38      INCLUDE "SYSCONST.X68"  ; Ancho/Alto Pantalla etc...
-00001000                            39  ; CONSTANTES DEL SISTEMA
-00001000                            40  
-00001000                            41  ; --- CONSTANTES PANTALLA ----------------------------------
-00001000                            42  
-00001000  =00000280                 43  SCRWIDTH    EQU     640                 ;SCREEN WIDTH
-00001000  =00000280                 44  SCRHEIGHT   EQU     640                 ;SCREEN HEIGHT
-00001000                            45  
-00001000                            46  ; --- CODIGOS DE CARACTERES --------------------------------
+00001000                            37  
+00001000                            38  -------------------- end include --------------------
+00001000                            39      INCLUDE "SYSCONST.X68"  ; Ancho/Alto Pantalla etc...
+00001000                            40  ; CONSTANTES DEL SISTEMA
+00001000                            41  
+00001000                            42  ; --- CONSTANTES PANTALLA ----------------------------------
+00001000                            43  
+00001000  =00000280                 44  SCRWIDTH    EQU     640                 ;SCREEN WIDTH
+00001000  =00000280                 45  SCRHEIGHT   EQU     640                 ;SCREEN HEIGHT
+00001000  =0000003C                 46  FPS         EQU     60                  ; FPS
 00001000                            47  
-00001000  =00000025                 48  KBDLEFT     EQU     $25     ; FLECHAS
-00001000  =00000026                 49  KBDUP       EQU     $26
-00001000  =00000027                 50  KBDRIGHT    EQU     $27
-00001000  =00000028                 51  KBDDOWN     EQU     $28
-00001000  =00000020                 52  KBDFIRE1    EQU     ' '     ; ESPACIO
-00001000  =0000004D                 53  KBDFIRE2    EQU     'M'     ; TECLA M
-00001000  =00000010                 54  KBDFIRE3    EQU     $10     ; TECLA SHIFT
-00001000  =00000050                 55  KBDPAUSE    EQU     'P'     ; TECLA P
-00001000                            56  
-00001000                            57  
-00001000                            58  -------------------- end include --------------------
-00001000                            59      INCLUDE "SYSTEM.X68"    ; INICIALIZACION PERIFERICOS ETC
-00001000                            60  ; SYSTEM
-00001000                            61  
-00001000                            62  ; ----------------------------------------------------------
-00001000                            63  SYSINIT
-00001000                            64  ; INICIALIZAR EL SISTEMA
-00001000                            65  ; INPUT     : NONE
-00001000                            66  ; OUTPUT    : NONE
-00001000                            67  ; MODIFIES  : NONE
-00001000                            68  ; ----------------------------------------------------------
-00001000  4EB9 00001024             69          JSR     SCRINIT
-00001006  4EB9 0000106C             70          JSR     KBDINIT
-0000100C                            71      
-0000100C                            72          ;METER EN EL TRAP 0 LA RUTINA PARA ACTUALIZAR LA PANTALLA
-0000100C  21FC 00001052 0080        73          MOVE.L  #SCRPLOT,($80)
-00001014  21FC 0000107A 0084        74          MOVE.L  #KBDUPD,($84)
-0000101C                            75              
-0000101C  40E7                      76          MOVE.W  SR,-(A7)
-0000101E  0257 D8FF                 77          ANDI.W  #$D8FF,(A7)
-00001022  4E73                      78          RTE
-00001024                            79      
-00001024                            80  ; ----------------------------------------------------------
-00001024                            81  SCRINIT
-00001024                            82  ; INIT RESOLUCION PANTALLA, PONER MODO VENTANA, BORRAR PANTALLA
-00001024                            83  ; ENABLE DOBLE BUFFER
-00001024                            84  ; INPUT     : NONE
-00001024                            85  ; OUTPUT    : NONE
-00001024                            86  ; MODIFIES  : D0-D1
-00001024                            87  ; ----------------------------------------------------------
-00001024                            88          
-00001024                            89          ;GUARDAR PARA RESTAURAR LUEGO LOS REGISTROS QUE MODIFICAMOS
-00001024  48E7 C000                 90          MOVEM.L D0-D1,-(A7)
-00001028                            91  
-00001028                            92          ;INIT RESOLUCION PANTALLA
-00001028  103C 0021                 93          MOVE.B  #33,D0
-0000102C  223C 02800280             94          MOVE.L  #SCRWIDTH<<16|SCRHEIGHT,D1
-00001032  4E4F                      95          TRAP    #15
-00001034                            96          
-00001034                            97          ;DEFINIR MODO VENTANA
-00001034  7201                      98          MOVE.L  #1,D1
-00001036  4E4F                      99          TRAP    #15
-00001038                           100          
-00001038                           101          ;BORRAR PANTALLA
-00001038  103C 000B                102          MOVE.B  #11,D0
-0000103C  323C FF00                103          MOVE.W  #$FF00,D1
-00001040  4E4F                     104          TRAP    #15
-00001042                           105          
-00001042                           106          ;ENABLE DOBLE BUFFER
-00001042  103C 005C                107          MOVE.B  #92,D0
-00001046  123C 0011                108          MOVE.B  #17,D1
-0000104A  4E4F                     109          TRAP    #15
-0000104C                           110          
-0000104C                           111          
-0000104C                           112          ;RESTAURAR LOS REGISTROS A SU ESTADO ANTERIOR A MODIFICACION
-0000104C  4CDF 0003                113          MOVEM.L (A7)+,D0-D1
-00001050                           114          
-00001050  4E75                     115          RTS
-00001052                           116  
-00001052                           117  ; ----------------------------------------------------------
-00001052                           118  SCRPLOT
-00001052                           119  ; ACTUALIZAR DOBLE BUFFER
-00001052                           120  ; INPUT     : NONE
-00001052                           121  ; OUTPUT    : NONE
-00001052                           122  ; MODIFIES  : D0-D1
-00001052                           123  ; ----------------------------------------------------------
-00001052  48A7 C000                124         MOVEM.W D0-D1,-(A7)
-00001056                           125         ; SWITCH BUFFERS
-00001056  103C 005E                126         MOVE.B  #94,D0
-0000105A  4E4F                     127         TRAP    #15
-0000105C                           128                    
-0000105C                           129          ; CLEAR HIDDEN BUFFER
-0000105C  103C 000B                130          MOVE.B  #11,D0
-00001060  323C FF00                131          MOVE.W  #$FF00,D1
-00001064  4E4F                     132          TRAP    #15
-00001066  4C9F 0003                133          MOVEM.W (A7)+,D0-D1
-0000106A                           134          
-0000106A  4E73                     135          RTE
-0000106C                           136          
-0000106C                           137  ; ----------------------------------------------------------
-0000106C                           138  KBDINIT
-0000106C                           139  ; INICIALIZAR TECLADO
-0000106C                           140  ; INPUT     : NONE
-0000106C                           141  ; OUTPUT    : NONE
-0000106C                           142  ; MODIFIES  : NONE
-0000106C                           143  ; ----------------------------------------------------------
-0000106C                           144  
-0000106C  4239 000012C6            145          CLR.B   (KBDVAL)
-00001072  4239 000012C7            146          CLR.B   (KBDEDGE)
-00001078                           147          
-00001078  4E75                     148          RTS
-0000107A                           149  ; ----------------------------------------------------------
-0000107A                           150  KBDUPD
-0000107A                           151  ; UPDATE KEYBOARD INFO.  
-0000107A                           152  ; 7 -> PAUSE
-0000107A                           153  ; 6 -> FIRE 3
-0000107A                           154  ; 5 -> FIRE 2
-0000107A                           155  ; 4 -> FIRE 1
-0000107A                           156  ; 3 -> DOWN
-0000107A                           157  ; 2 -> RIGHT
-0000107A                           158  ; 1 -> UP
-0000107A                           159  ; 0 -> LEFT
-0000107A                           160  ; INPUT    : NONE
-0000107A                           161  ; OUTPUT   : NONE
-0000107A                           162  ; MODIFIES : NONE
-0000107A                           163  ; ----------------------------------------------------------
-0000107A                           164          
-0000107A  48A7 F000                165          MOVEM.W D0-D3,-(A7)
-0000107E                           166  
-0000107E                           167          ; LEER PRIMERA PARTE
-0000107E                           168          
-0000107E  103C 0013                169          MOVE.B  #19,D0
-00001082  223C 50104D20            170          MOVE.L  #KBDPAUSE<<24|KBDFIRE3<<16|KBDFIRE2<<8|KBDFIRE1,D1
-00001088  4E4F                     171          TRAP    #15
-0000108A                           172          
-0000108A                           173          ; MOVERLO AL FORMATO QUE QUEREMOS
-0000108A  4EB9 000010BE            174          JSR     .PACK
-00001090                           175          
-00001090                           176          ;LEER SEGUNDA PARTE
-00001090  103C 0013                177          MOVE.B  #19,D0
-00001094  223C 28272625            178          MOVE.L  #KBDDOWN<<24|KBDRIGHT<<16|KBDUP<<8|KBDLEFT,D1
-0000109A  4E4F                     179          TRAP    #15
-0000109C                           180  
-0000109C                           181          ; MOVERLO AL FORMATO QUE QUEREMOS
-0000109C  4EB9 000010BE            182          JSR     .PACK
-000010A2                           183          
-000010A2                           184          ;COMPUTAR KBDEGE
-000010A2  1039 000012C6            185          MOVE.B  (KBDVAL),D0
-000010A8  4600                     186          NOT.B   D0
-000010AA  C002                     187          AND.B   D2,D0
-000010AC  13C0 000012C7            188          MOVE.B  D0,(KBDEDGE)
-000010B2                           189  
-000010B2                           190          ;GUARDAR KBDVAL
-000010B2  13C2 000012C6            191          MOVE.B  D2,(KBDVAL)     
-000010B8                           192          
-000010B8  4C9F 000F                193          MOVEM.W (A7)+,D0-D3
-000010BC                           194  
-000010BC  4E73                     195          RTE
-000010BE                           196  
-000010BE                           197  
-000010BE                           198          ;RUTINA PARA MOVER AL FORMATO
-000010BE  363C 0003                199  .PACK   MOVE.W  #3,D3
-000010C2  E189                     200  .LOOP   LSL.L   #8,D1
-000010C4  E312                     201          ROXL.B  #1,D2
-000010C6  51CB FFFA                202          DBRA.W  D3,.LOOP
-000010CA  4E75                     203          RTS   
-000010CC                           204  
-000010CC                           205  
-000010CC                           206  
-000010CC                           207  
-000010CC                           208  
-000010CC                           209  
-000010CC                           210  
-000010CC                           211  
-000010CC                           212  
-000010CC                           213  -------------------- end include --------------------
-000010CC                           214      INCLUDE "JUGADOR.X68"   ; BARRA DEL JUGADOR (PAD.X68)
-000010CC                           215  ; JUGADOR
-000010CC                           216  
-000010CC                           217  ; ----------------------------------------------------------
-000010CC                           218  PJINIT
-000010CC                           219  ; INICIALIZAR EL PALA DEL JUGADOR
-000010CC                           220  ; INPUT     : NONE
-000010CC                           221  ; OUTPUT    : NONE
-000010CC                           222  ; MODIFIES  : NONE
-000010CC                           223  ; ----------------------------------------------------------
-000010CC  33FC 0140 000012C0       224              MOVE.W #SCRWIDTH/2,(PJPOSX)
-000010D4  4E75                     225              RTS
-000010D6                           226      
-000010D6                           227  PJUPD
-000010D6                           228  ; ACTUALIZAR EL JUGADOR
-000010D6                           229  ; INPUT     : NONE
-000010D6                           230  ; OUTPUT    : NONE
-000010D6                           231  ; MODIFIES  : NONE
-000010D6                           232  ; ----------------------------------------------------------
-000010D6                           233              
-000010D6  3F00                     234              MOVE.W  D0,-(A7)
-000010D8                           235              
-000010D8                           236              ;ACTUALIZAR POSICION JUGADOR
-000010D8  3039 000012C0            237              MOVE.W  (PJPOSX),D0
-000010DE  0839 0000 000012C6       238              BTST.B  #0,(KBDVAL)
-000010E6  6700 0004                239              BEQ     .CHKLEFT
-000010EA  5F40                     240              SUB.W   #PJSPEED,D0
-000010EC  0839 0002 000012C6       241  .CHKLEFT    BTST.B  #2,(KBDVAL)
-000010F4  6700 0004                242              BEQ     .CONT
-000010F8  5E40                     243              ADD.W   #PJSPEED,D0
-000010FA                           244              
-000010FA                           245              ;COLISIONES PARA QUE NO SE SALGA DE LA PANTALLA
-000010FA  B07C 0040                246  .CONT       CMP.W   #PJANCHO/2,D0
-000010FE  6C00 000A                247              BGE     .CONT2
-00001102  303C 0040                248              MOVE.W  #PJANCHO/2,D0
-00001106  6000 000E                249              BRA     .DONE
-0000110A                           250              
-0000110A  B07C 0240                251  .CONT2      CMP.W   #SCRWIDTH-PJANCHO/2,D0
-0000110E  6F00 0006                252              BLE     .DONE
-00001112  303C 0240                253              MOVE.W  #SCRWIDTH-PJANCHO/2,D0
-00001116                           254  
-00001116                           255              ;ACTUALIZAR VARIABLE
-00001116  33C0 000012C0            256  .DONE       MOVE.W  D0,(PJPOSX)
-0000111C                           257  
-0000111C  301F                     258              MOVE.W  (A7)+,D0            
-0000111E                           259  
-0000111E  4E75                     260              RTS
-00001120                           261      
-00001120                           262  PJPLOT
-00001120                           263  ; ACTUALIZAR GRAFICAMENTE AL JUGADOR
-00001120                           264  ; INPUT     : NONE
-00001120                           265  ; OUTPUT    : NONE
-00001120                           266  ; MODIFIES  : NONE
-00001120                           267  ; ----------------------------------------------------------
-00001120                           268  
-00001120  48E7 F800                269              MOVEM.L D0-D4,-(A7)
-00001124                           270  
-00001124                           271              ;DEFINIR COLOR CONTORNO
-00001124  103C 0050                272              MOVE.B  #80,D0
-00001128  223C 00FF0000            273              MOVE.L  #PJCOLOR,D1
-0000112E  4E4F                     274              TRAP    #15
-00001130                           275                          
-00001130                           276              ;DEFINIR COLOR RELLENO
-00001130  103C 0051                277              MOVE.B  #81,D0
-00001134  223C 000000FF            278              MOVE.L  #PJFILL,D1
-0000113A  4E4F                     279              TRAP    #15
-0000113C                           280              
-0000113C                           281              ;DEFINIR COORDENADAS
-0000113C                           282              
-0000113C                           283                  ;DEFINIR ANCHURA RECTANGULO
-0000113C  3239 000012C0            284              MOVE.W  (PJPOSX),D1
-00001142  0441 0040                285              SUB.W   #PJANCHO/2,D1
-00001146  3601                     286              MOVE.W  D1,D3
-00001148  0643 0080                287              ADD.W   #PJANCHO,D3
-0000114C                           288  
-0000114C                           289                  ;DEFINIR ALTURA RECTANGULO
-0000114C  343C 01EC                290              MOVE.W  #PJY-PJALTO/2,D2
-00001150  383C 01FC                291              MOVE.W  #PJY+PJALTO/2,D4
-00001154                           292              
-00001154                           293              ;DIBUJAR RECTANGULO
-00001154  103C 0057                294              MOVE.B  #87,D0
-00001158  4E4F                     295              TRAP    #15
-0000115A                           296              
-0000115A  4CDF 001F                297              MOVEM.L  (A7)+,D0-D4
-0000115E                           298              
-0000115E  4E75                     299              RTS
-00001160                           300              
-00001160                           301              
-00001160                           302              
-00001160                           303  
-00001160                           304  -------------------- end include --------------------
-00001160                           305      INCLUDE "LASER.X68"     ; LASER DEL JUGADOR
-00001160                           306  ; LASER
-00001160                           307  LASINIT
-00001160                           308  ; INICIALIZAR EL LASER
-00001160                           309  ; INPUT     : NONE
-00001160                           310  ; OUTPUT    : NONE
-00001160                           311  ; MODIFIES  : NONE
-00001160                           312  ; ----------------------------------------------------------
-00001160  33FC 0140 000012BA       313      MOVE.W  #SCRWIDTH/2,(LASPOSX)
-00001168  33FC 01E4 000012BC       314      MOVE.W  #PJY-LASY,(LASPOSY)
-00001170  33FC 0003 000012BE       315      MOVE.W  #LASSPEED,(LASVELY)
-00001178  4E75                     316      RTS
-0000117A                           317      
-0000117A                           318  LASUPD
-0000117A                           319  ; ACTUALIZAR EL LASER
-0000117A                           320  ; INPUT     : NONE
-0000117A                           321  ; OUTPUT    : NONE
-0000117A                           322  ; MODIFIES  : NONE
-0000117A                           323  ; ----------------------------------------------------------
-0000117A                           324  
-0000117A  48E7 C000                325              MOVEM.L D0-D1,-(A7)
-0000117E                           326      
-0000117E                           327              ;SI SE HA PULSADO LA TECLA SPACE, MOVER EL LASER A LA POSICION DEL JUGADOR
-0000117E  0839 0004 000012C7       328              BTST.B  #4,(KBDEDGE)     ;SI SE HA PULSADO
-00001186  6700 0018                329              BEQ     .SEGUIR
-0000118A  3039 000012C0            330              MOVE.W  (PJPOSX),D0
-00001190  33C0 000012BA            331              MOVE.W  D0,(LASPOSX)
-00001196  323C 01E4                332              MOVE.W  #PJY-PJALTO,D1
-0000119A  33C1 000012BC            333              MOVE.W  D1,(LASPOSY)
-000011A0                           334      
-000011A0                           335      
-000011A0                           336              ;ACTUALIZAR POSICION LASER
-000011A0  3039 000012BC            337  .SEGUIR     MOVE.W  (LASPOSY),D0
-000011A6  9079 000012BE            338              SUB.W   (LASVELY),D0
-000011AC                           339      
-000011AC                           340      
-000011AC                           341              ;GUARDAR POSICION
-000011AC  33C0 000012BC            342              MOVE.W  D0,(LASPOSY)
-000011B2                           343      
-000011B2  4CDF 0003                344              MOVEM.L (A7)+,D0-D1
-000011B6                           345      
-000011B6  4E75                     346              RTS
-000011B8                           347  
-000011B8                           348  LASPLOT
-000011B8                           349  ; ACTUALIZAR GRAFICAMENTE EL SALER
-000011B8                           350  ; INPUT     : NONE
-000011B8                           351  ; OUTPUT    : NONE
-000011B8                           352  ; MODIFIES  : NONE
-000011B8                           353  ; ----------------------------------------------------------
-000011B8                           354  
-000011B8  48E7 F800                355      MOVEM.L D0-D4,-(A7)
-000011BC                           356      
-000011BC                           357      ;DEFINIR COLOR CONTORNO
-000011BC  103C 0050                358      MOVE.B  #80,D0
-000011C0  223C 00FFFFFF            359      MOVE.L  #LASCOLOR,D1
-000011C6  4E4F                     360      TRAP    #15
-000011C8                           361                          
-000011C8                           362      ;DEFINIR COLOR RELLENO
-000011C8  103C 0051                363      MOVE.B  #81,D0
-000011CC  223C 0000FFFF            364      MOVE.L  #LASFILL,D1
-000011D2  4E4F                     365      TRAP    #15
-000011D4                           366      
-000011D4                           367      ;DEFINIR COORDENADAS
-000011D4                           368              
-000011D4                           369          ;DEFINIR ANCHURA LASER
-000011D4  3239 000012BA            370      MOVE.W  (LASPOSX),D1
-000011DA  5541                     371      SUB.W   #LASX/2,D1
-000011DC  3601                     372      MOVE.W  D1,D3
-000011DE  5843                     373      ADD.W   #LASX,D3
-000011E0                           374              
-000011E0                           375          ;DEFINIR ALTURA LASER
-000011E0  3439 000012BC            376      MOVE.W  (LASPOSY),D2
-000011E6  5142                     377      SUB.W   #LASY/2,D2
-000011E8  3802                     378      MOVE.W  D2,D4
-000011EA  0644 0010                379      ADD.W   #LASY,D4
-000011EE                           380              
-000011EE                           381              ;DIBUJAR RECTANGULO
-000011EE  103C 0057                382      MOVE.B  #87,D0
-000011F2  4E4F                     383      TRAP    #15
-000011F4                           384  
-000011F4  4CDF 001F                385      MOVEM.L (A7)+,D0-D4
-000011F8                           386      
-000011F8  4E75                     387      RTS
-000011FA                           388  
-000011FA                           389  
-000011FA                           390  -------------------- end include --------------------
-000011FA                           391      INCLUDE "LASERBAD.X68"  ; LASER DE LOS ENEMIGOS
-000011FA                           392  ; LASERBAD
-000011FA                           393  
-000011FA                           394  LASBINIT
-000011FA                           395  ; INICIALIZAR EL LASER DEL ENEMIGO
-000011FA                           396  ; INPUT     : NONE
-000011FA                           397  ; OUTPUT    : NONE
-000011FA                           398  ; MODIFIES  : NONE
-000011FA                           399  ; ----------------------------------------------------------
-000011FA  4E75                     400      RTS
-000011FC                           401      
-000011FC                           402  LASBUPD
-000011FC                           403  ; ACTUALIZAR EL LASER DEL ENEMIGO
-000011FC                           404  ; INPUT     : NONE
-000011FC                           405  ; OUTPUT    : NONE
-000011FC                           406  ; MODIFIES  : NONE
-000011FC                           407  ; ----------------------------------------------------------
-000011FC  4E75                     408      RTS
-000011FE                           409      
-000011FE                           410  LASBPLOT
-000011FE                           411  ; ACTUALIZAR GRAFICAMENTE EL LASER DEL ENEMIGO
-000011FE                           412  ; INPUT     : NONE
-000011FE                           413  ; OUTPUT    : NONE
-000011FE                           414  ; MODIFIES  : NONE
-000011FE                           415  ; ----------------------------------------------------------
-000011FE  4E75                     416      RTS
-000011FE  4E75                     417  -------------------- end include --------------------
-00001200                           418      INCLUDE "SCORE.X68"     ; PUNTUACION
-00001200                           419  ; SCORE
-00001200                           420  SCOINIT
-00001200                           421  ; INICIALIZAR EL MARCADOR
-00001200                           422  ; INPUT     : NONE
-00001200                           423  ; OUTPUT    : NONE
-00001200                           424  ; MODIFIES  : NONE
-00001200                           425  ; ----------------------------------------------------------
-00001200  4279 000012C2            426              CLR.W   (SCOIN)
-00001206  4279 000012C4            427              CLR.W   (SCOOUT)
-0000120C  4E75                     428              RTS
-0000120E                           429      
-0000120E                           430  SCOPLOT
-0000120E                           431  ; ACTUALIZAR GRAFICAMENTE EL MARCADOR
-0000120E                           432  ; INPUT     : NONE
-0000120E                           433  ; OUTPUT    : NONE
-0000120E                           434  ; MODIFIES  : NONE
-0000120E                           435  ; ----------------------------------------------------------
-0000120E                           436  
-0000120E  48E7 C040                437              MOVEM.L D0-D1/A1,-(A7)
-00001212                           438              ;DEFINIR COLOR DE FONDO
-00001212  103C 0051                439              MOVE.B  #81,D0
-00001216  7200                     440              MOVE.L  #SCOFILL,D1
-00001218  4E4F                     441              TRAP    #15
-0000121A                           442              
-0000121A                           443              ;DEFINIR COODENADAS DONDE SE IMPRIME EL TEXTO 1
-0000121A  103C 000B                444              MOVE.B  #11,D0
-0000121E  323C 0101                445              MOVE.W  #SCOLINE1,D1
-00001222  4E4F                     446              TRAP    #15
-00001224                           447              
-00001224                           448              ;IMPRIMIR SCORE
-00001224  43F9 0000125C            449              LEA     .TXT1,A1
-0000122A  4281                     450              CLR.L   D1
-0000122C  3239 000012C2            451              MOVE.W  (SCOIN),D1
-00001232  103C 0011                452              MOVE.B  #17,D0
-00001236  4E4F                     453              TRAP    #15
-00001238                           454              
-00001238                           455              ;DEFINIR COODENADAS DONDE SE IMPRIME EL TEXTO 2
-00001238  103C 000B                456              MOVE.B  #11,D0
-0000123C  323C 1001                457              MOVE.W  #SCOLINE2,D1
-00001240  4E4F                     458              TRAP    #15
-00001242                           459              
-00001242                           460              ;IMPRIMIR MAXSCORE
-00001242  43F9 00001268            461              LEA     .TXT2,A1
-00001248  4281                     462              CLR.L   D1
-0000124A  3239 000012C4            463              MOVE.W  (SCOOUT),D1
-00001250  103C 0011                464              MOVE.B  #17,D0
-00001254  4E4F                     465              TRAP    #15
-00001256                           466              
-00001256  4CDF 0203                467              MOVEM.L (A7)+,D0-D1/A1
-0000125A                           468              
-0000125A  4E75                     469              RTS
-0000125C= 53 43 4F 52 45 20 ...    470  .TXT1       DC.B        'SCORE     :',0
-00001268= 4D 41 58 20 53 43 ...    471  .TXT2       DC.B        'MAX SCORE :',0
-00001274                           472  
-00001274                           473  -------------------- end include --------------------
-00001274                           474      
-00001274                           475      
-00001274                           476      
-00001274                           477  START:
-00001274                           478  ; --- INICIALIZAR ------------------------------------------
-00001274  007C 0700                479              ORI.W  #$0700,SR    ;DESACTIVAR INTERRUPCIONES
-00001278  4EB8 1000                480              JSR     SYSINIT
-0000127C  4EB8 10CC                481              JSR     PJINIT
-00001280  4EB8 1200                482              JSR     SCOINIT
-00001284  4EB8 1160                483              JSR     LASINIT
-00001288  4EB8 11FA                484              JSR     LASBINIT
-0000128C                           485  .LOOP
-0000128C                           486  
-0000128C                           487  ; --- UPDATE -----------------------------------------------
-0000128C                           488  
-0000128C                           489  ; LECTURA DISPOSITIVOS DE ENTRADA
-0000128C  4E41                     490              TRAP    #1
-0000128E                           491  
-0000128E                           492  ; UPDATE GAME LOGIC
-0000128E                           493  
-0000128E  4EB8 117A                494              JSR     LASUPD
-00001292  4EB8 11FC                495              JSR     LASBUPD
-00001296  4EB8 10D6                496              JSR     PJUPD
-0000129A                           497  
-0000129A                           498  ; --- SYNCRONIZAR (PARA EL FRAMERATE) ----------------------
-0000129A                           499  
-0000129A                           500      ;BORRAR A PRIORI, ESTA MAL
-0000129A  103C 0017                501      MOVE.B  #23,D0
-0000129E  7201                     502      MOVE.L  #1,D1
-000012A0  4E4F                     503      TRAP    #15
-000012A2                           504  
-000012A2                           505  ; --- DIBUJAR PANTALLA -------------------------------------
-000012A2                           506  
-000012A2  4EB8 120E                507              JSR     SCOPLOT
-000012A6  4EB8 11B8                508              JSR     LASPLOT
-000012AA  4EB8 11FE                509              JSR     LASBPLOT
-000012AE  4EB8 1120                510              JSR     PJPLOT
-000012B2                           511              
-000012B2  4E40                     512              TRAP    #0
-000012B4                           513              
-000012B4                           514              
-000012B4  60D6                     515              BRA     .LOOP
-000012B6                           516  
-000012B6  FFFF FFFF                517              SIMHALT                 ; halt simulator
-000012BA                           518  
-000012BA                           519  
-000012BA                           520              INCLUDE "VARS.X68"      ; Variables del juego
-000012BA                           521  ;   VARIABLES DEL JUEGO
-000012BA                           522  
-000012BA                           523  ; --- LASER JUGADOR ----------------------------------------
-000012BA                           524     
-000012BA                           525  LASPOSX     DS.W    1       ; COORDENADAS LASER X
-000012BC                           526  LASPOSY     DS.W    1       ; COORDENADAS LASER Y
-000012BE                           527  LASVELY     DS.W    1       ; VELOCIDAD VERTICAL LASER
-000012C0                           528  
-000012C0                           529  ; --- VARIABLES JUGADOR ------------------------------------
-000012C0                           530  
-000012C0                           531  PJPOSX      DS.W    1       ; POSICION JUGADOR
-000012C2                           532  
-000012C2                           533  
-000012C2                           534  
-000012C2                           535  ; --- SCOREBOARD VARIABLES ---------------------------------
-000012C2                           536  
-000012C2                           537  SCOIN       DS.W    1       ; PUNTOS GANADOS (ENEMIGOS MATADOS)
-000012C4                           538  SCOOUT      DS.W    1       ; PUNTOS PERDIDOS (MUERTES)(OPCIONAL)
-000012C6                           539  
-000012C6                           540  -------------------- end include --------------------
-000012C6                           541              INCLUDE "SYSVAR.X68"    ; Variables sistema
-000012C6                           542  ;   VARIABLES DEL SISTEMA
-000012C6                           543  
-000012C6                           544  
-000012C6                           545  ; --- VARIABLES DE TECLADO  --------------------------------
-000012C6                           546  
-000012C6                           547  KBDVAL      DS.B    1           ; ESTADO DE TODAS LAS TECLAS
-000012C7                           548  KBDEDGE     DS.B    1           ; SI SE ACABA DE PULSAR UNA TECLA
-000012C7                           549  -------------------- end include --------------------
-000012C8                           550  
-000012C8                           551              END    START            ; last line of source
+00001000                            48  ; --- CODIGOS DE CARACTERES --------------------------------
+00001000                            49  
+00001000  =00000025                 50  KBDLEFT     EQU     $25     ; FLECHAS
+00001000  =00000026                 51  KBDUP       EQU     $26
+00001000  =00000027                 52  KBDRIGHT    EQU     $27
+00001000  =00000028                 53  KBDDOWN     EQU     $28
+00001000  =00000020                 54  KBDFIRE1    EQU     ' '     ; ESPACIO
+00001000  =0000004D                 55  KBDFIRE2    EQU     'M'     ; TECLA M
+00001000  =00000010                 56  KBDFIRE3    EQU     $10     ; TECLA SHIFT
+00001000  =00000050                 57  KBDPAUSE    EQU     'P'     ; TECLA P
+00001000                            58  
+00001000                            59  ; --- TRAP NUMBER ------------------------------------------
+00001000                            60  
+00001000  =00000000                 61  SCRUPTN     EQU     0       ; TRAP ACTUALIZAR PANTALLA
+00001000  =00000001                 62  KBDUPTN     EQU     1       ; TRAP ACTUALIZAR TECLADO
+00001000                            63  
+00001000                            64  ; --- INTERRUPT NUMBERS ------------------------------------
+00001000                            65  
+00001000  =00000001                 66  SCRINTN     EQU     1       ; NUMERO INTERRUPCION
+00001000                            67  
+00001000                            68  
+00001000                            69  
+00001000                            70  -------------------- end include --------------------
+00001000                            71      INCLUDE "SYSTEM.X68"    ; INICIALIZACION PERIFERICOS ETC
+00001000                            72  ; SYSTEM
+00001000                            73  
+00001000                            74  ; ----------------------------------------------------------
+00001000                            75  SYSINIT
+00001000                            76  ; INICIALIZAR EL SISTEMA
+00001000                            77  ; INPUT     : NONE
+00001000                            78  ; OUTPUT    : NONE
+00001000                            79  ; MODIFIES  : NONE
+00001000                            80  ; ----------------------------------------------------------
+00001000  4EB9 0000102C             81          JSR     SCRINIT
+00001006  4EB9 00001094             82          JSR     KBDINIT
+0000100C                            83      
+0000100C                            84          ;METER EN EL TRAP 0 LA RUTINA PARA ACTUALIZAR LA PANTALLA
+0000100C  21FC 00001072 0080        85          MOVE.L  #SCRPLOT,($80+SCRUPTN*4)
+00001014  21FC 000010A2 0084        86          MOVE.L  #KBDUPD,($80+KBDUPTN*4)
+0000101C  21FC 0000108C 0064        87          MOVE.L  #SCRTIM,($60+SCRINTN*4)   ;INTERRUPCION #1
+00001024                            88              
+00001024  40E7                      89          MOVE.W  SR,-(A7)
+00001026  0257 D8FF                 90          ANDI.W  #$D8FF,(A7)     ;ACTIVAR INTERRUPCIONES
+0000102A  4E73                      91          RTE
+0000102C                            92      
+0000102C                            93  ; ----------------------------------------------------------
+0000102C                            94  SCRINIT
+0000102C                            95  ; INIT RESOLUCION PANTALLA, PONER MODO VENTANA, BORRAR PANTALLA
+0000102C                            96  ; ENABLE DOBLE BUFFER, HABILITAR INTERRUPCION TEMPORIZADA
+0000102C                            97  ; INPUT     : NONE
+0000102C                            98  ; OUTPUT    : NONE
+0000102C                            99  ; MODIFIES  : D0-D1
+0000102C                           100  ; ----------------------------------------------------------
+0000102C                           101          
+0000102C                           102          ;GUARDAR PARA RESTAURAR LUEGO LOS REGISTROS QUE MODIFICAMOS
+0000102C  48E7 F000                103          MOVEM.L D0-D3,-(A7)
+00001030                           104  
+00001030                           105          ;INIT RESOLUCION PANTALLA
+00001030  103C 0021                106          MOVE.B  #33,D0
+00001034  223C 02800280            107          MOVE.L  #SCRWIDTH<<16|SCRHEIGHT,D1
+0000103A  4E4F                     108          TRAP    #15
+0000103C                           109          
+0000103C                           110          ;DEFINIR MODO VENTANA
+0000103C  7201                     111          MOVE.L  #1,D1
+0000103E  4E4F                     112          TRAP    #15
+00001040                           113          
+00001040                           114          ;BORRAR PANTALLA
+00001040  103C 000B                115          MOVE.B  #11,D0
+00001044  323C FF00                116          MOVE.W  #$FF00,D1
+00001048  4E4F                     117          TRAP    #15
+0000104A                           118          
+0000104A                           119          ;ENABLE DOBLE BUFFER
+0000104A  103C 005C                120          MOVE.B  #92,D0
+0000104E  123C 0011                121          MOVE.B  #17,D1
+00001052  4E4F                     122          TRAP    #15
+00001054                           123          
+00001054                           124          ;ENABLE ENABLE TIMER
+00001054  103C 0020                125          MOVE.B  #32,D0
+00001058  123C 0006                126          MOVE.B  #6,D1
+0000105C  143C 0081                127          MOVE.B  #$80|SCRINTN,D2
+00001060  163C 0010                128          MOVE.B  #1000/FPS,D3
+00001064  4E4F                     129          TRAP    #15
+00001066                           130          
+00001066                           131          ;CLEAR INTERRUPT COUNTER
+00001066  4239 000012FC            132          CLR.B   (SCRINTCT)
+0000106C                           133          
+0000106C                           134          
+0000106C                           135          ;RESTAURAR LOS REGISTROS A SU ESTADO ANTERIOR A MODIFICACION
+0000106C  4CDF 000F                136          MOVEM.L (A7)+,D0-D3
+00001070                           137          
+00001070  4E75                     138          RTS
+00001072                           139  
+00001072                           140  ; ----------------------------------------------------------
+00001072                           141  SCRPLOT
+00001072                           142  ; ACTUALIZAR DOBLE BUFFER
+00001072                           143  ; INPUT     : NONE
+00001072                           144  ; OUTPUT    : NONE
+00001072                           145  ; MODIFIES  : D0-D1
+00001072                           146  ; ----------------------------------------------------------
+00001072  48A7 C000                147         MOVEM.W D0-D1,-(A7)
+00001076                           148         ; SWITCH BUFFERS
+00001076  103C 005E                149         MOVE.B  #94,D0
+0000107A  4E4F                     150         TRAP    #15
+0000107C                           151                    
+0000107C                           152          ; CLEAR HIDDEN BUFFER
+0000107C  103C 000B                153          MOVE.B  #11,D0
+00001080  323C FF00                154          MOVE.W  #$FF00,D1
+00001084  4E4F                     155          TRAP    #15
+00001086  4C9F 0003                156          MOVEM.W (A7)+,D0-D1
+0000108A                           157          
+0000108A  4E73                     158          RTE
+0000108C                           159  ; ----------------------------------------------------------
+0000108C                           160  SCRTIM
+0000108C                           161  ; RUTINA DE INTERRUPCION CONTROLADA
+0000108C                           162  ; INPUT     : NONE
+0000108C                           163  ; OUTPUT    : NONE
+0000108C                           164  ; MODIFIES  : NONE
+0000108C                           165  ; ----------------------------------------------------------
+0000108C  5239 000012FC            166          ADDQ.B   #1,(SCRINTCT)        
+00001092  4E73                     167          RTE
+00001094                           168          
+00001094                           169  ; ----------------------------------------------------------
+00001094                           170  KBDINIT
+00001094                           171  ; INICIALIZAR TECLADO
+00001094                           172  ; INPUT     : NONE
+00001094                           173  ; OUTPUT    : NONE
+00001094                           174  ; MODIFIES  : NONE
+00001094                           175  ; ----------------------------------------------------------
+00001094                           176  
+00001094  4239 000012FA            177          CLR.B   (KBDVAL)
+0000109A  4239 000012FB            178          CLR.B   (KBDEDGE)
+000010A0                           179          
+000010A0  4E75                     180          RTS
+000010A2                           181  ; ----------------------------------------------------------
+000010A2                           182  KBDUPD
+000010A2                           183  ; UPDATE KEYBOARD INFO.  
+000010A2                           184  ; 7 -> PAUSE
+000010A2                           185  ; 6 -> FIRE 3
+000010A2                           186  ; 5 -> FIRE 2
+000010A2                           187  ; 4 -> FIRE 1
+000010A2                           188  ; 3 -> DOWN
+000010A2                           189  ; 2 -> RIGHT
+000010A2                           190  ; 1 -> UP
+000010A2                           191  ; 0 -> LEFT
+000010A2                           192  ; INPUT    : NONE
+000010A2                           193  ; OUTPUT   : NONE
+000010A2                           194  ; MODIFIES : NONE
+000010A2                           195  ; ----------------------------------------------------------
+000010A2                           196          
+000010A2  48A7 F000                197          MOVEM.W D0-D3,-(A7)
+000010A6                           198  
+000010A6                           199          ; LEER PRIMERA PARTE
+000010A6                           200          
+000010A6  103C 0013                201          MOVE.B  #19,D0
+000010AA  223C 50104D20            202          MOVE.L  #KBDPAUSE<<24|KBDFIRE3<<16|KBDFIRE2<<8|KBDFIRE1,D1
+000010B0  4E4F                     203          TRAP    #15
+000010B2                           204          
+000010B2                           205          ; MOVERLO AL FORMATO QUE QUEREMOS
+000010B2  4EB9 000010E6            206          JSR     .PACK
+000010B8                           207          
+000010B8                           208          ;LEER SEGUNDA PARTE
+000010B8  103C 0013                209          MOVE.B  #19,D0
+000010BC  223C 28272625            210          MOVE.L  #KBDDOWN<<24|KBDRIGHT<<16|KBDUP<<8|KBDLEFT,D1
+000010C2  4E4F                     211          TRAP    #15
+000010C4                           212  
+000010C4                           213          ; MOVERLO AL FORMATO QUE QUEREMOS
+000010C4  4EB9 000010E6            214          JSR     .PACK
+000010CA                           215          
+000010CA                           216          ;COMPUTAR KBDEGE
+000010CA  1039 000012FA            217          MOVE.B  (KBDVAL),D0
+000010D0  4600                     218          NOT.B   D0
+000010D2  C002                     219          AND.B   D2,D0
+000010D4  13C0 000012FB            220          MOVE.B  D0,(KBDEDGE)
+000010DA                           221  
+000010DA                           222          ;GUARDAR KBDVAL
+000010DA  13C2 000012FA            223          MOVE.B  D2,(KBDVAL)     
+000010E0                           224          
+000010E0  4C9F 000F                225          MOVEM.W (A7)+,D0-D3
+000010E4                           226  
+000010E4  4E73                     227          RTE
+000010E6                           228  
+000010E6                           229  
+000010E6                           230          ;RUTINA PARA MOVER AL FORMATO
+000010E6  363C 0003                231  .PACK   MOVE.W  #3,D3
+000010EA  E189                     232  .LOOP   LSL.L   #8,D1
+000010EC  E312                     233          ROXL.B  #1,D2
+000010EE  51CB FFFA                234          DBRA.W  D3,.LOOP
+000010F2  4E75                     235          RTS   
+000010F4                           236  
+000010F4                           237  
+000010F4                           238  
+000010F4                           239  
+000010F4                           240  
+000010F4                           241  
+000010F4                           242  
+000010F4                           243  
+000010F4                           244  
+000010F4                           245  
+000010F4                           246  -------------------- end include --------------------
+000010F4                           247      INCLUDE "JUGADOR.X68"   ; BARRA DEL JUGADOR (PAD.X68)
+000010F4                           248  ; JUGADOR
+000010F4                           249  
+000010F4                           250  ; ----------------------------------------------------------
+000010F4                           251  PJINIT
+000010F4                           252  ; INICIALIZAR EL PALA DEL JUGADOR
+000010F4                           253  ; INPUT     : NONE
+000010F4                           254  ; OUTPUT    : NONE
+000010F4                           255  ; MODIFIES  : NONE
+000010F4                           256  ; ----------------------------------------------------------
+000010F4  33FC 0140 000012F4       257              MOVE.W #SCRWIDTH/2,(PJPOSX)
+000010FC  4E75                     258              RTS
+000010FE                           259      
+000010FE                           260  PJUPD
+000010FE                           261  ; ACTUALIZAR EL JUGADOR
+000010FE                           262  ; INPUT     : NONE
+000010FE                           263  ; OUTPUT    : NONE
+000010FE                           264  ; MODIFIES  : NONE
+000010FE                           265  ; ----------------------------------------------------------
+000010FE                           266              
+000010FE  3F00                     267              MOVE.W  D0,-(A7)
+00001100                           268              
+00001100                           269              ;ACTUALIZAR POSICION JUGADOR
+00001100  3039 000012F4            270              MOVE.W  (PJPOSX),D0
+00001106  0839 0000 000012FA       271              BTST.B  #0,(KBDVAL)
+0000110E  6700 0004                272              BEQ     .CHKLEFT
+00001112  5F40                     273              SUB.W   #PJSPEED,D0
+00001114  0839 0002 000012FA       274  .CHKLEFT    BTST.B  #2,(KBDVAL)
+0000111C  6700 0004                275              BEQ     .CONT
+00001120  5E40                     276              ADD.W   #PJSPEED,D0
+00001122                           277              
+00001122                           278              ;COLISIONES PARA QUE NO SE SALGA DE LA PANTALLA
+00001122  B07C 0040                279  .CONT       CMP.W   #PJANCHO/2,D0
+00001126  6C00 000A                280              BGE     .CONT2
+0000112A  303C 0040                281              MOVE.W  #PJANCHO/2,D0
+0000112E  6000 000E                282              BRA     .DONE
+00001132                           283              
+00001132  B07C 0240                284  .CONT2      CMP.W   #SCRWIDTH-PJANCHO/2,D0
+00001136  6F00 0006                285              BLE     .DONE
+0000113A  303C 0240                286              MOVE.W  #SCRWIDTH-PJANCHO/2,D0
+0000113E                           287  
+0000113E                           288              ;ACTUALIZAR VARIABLE
+0000113E  33C0 000012F4            289  .DONE       MOVE.W  D0,(PJPOSX)
+00001144                           290  
+00001144  301F                     291              MOVE.W  (A7)+,D0            
+00001146                           292  
+00001146  4E75                     293              RTS
+00001148                           294      
+00001148                           295  PJPLOT
+00001148                           296  ; ACTUALIZAR GRAFICAMENTE AL JUGADOR
+00001148                           297  ; INPUT     : NONE
+00001148                           298  ; OUTPUT    : NONE
+00001148                           299  ; MODIFIES  : NONE
+00001148                           300  ; ----------------------------------------------------------
+00001148                           301  
+00001148  48E7 F800                302              MOVEM.L D0-D4,-(A7)
+0000114C                           303  
+0000114C                           304              ;DEFINIR COLOR CONTORNO
+0000114C  103C 0050                305              MOVE.B  #80,D0
+00001150  223C 00FF0000            306              MOVE.L  #PJCOLOR,D1
+00001156  4E4F                     307              TRAP    #15
+00001158                           308                          
+00001158                           309              ;DEFINIR COLOR RELLENO
+00001158  103C 0051                310              MOVE.B  #81,D0
+0000115C  223C 000000FF            311              MOVE.L  #PJFILL,D1
+00001162  4E4F                     312              TRAP    #15
+00001164                           313              
+00001164                           314              ;DEFINIR COORDENADAS
+00001164                           315              
+00001164                           316                  ;DEFINIR ANCHURA RECTANGULO
+00001164  3239 000012F4            317              MOVE.W  (PJPOSX),D1
+0000116A  0441 0040                318              SUB.W   #PJANCHO/2,D1
+0000116E  3601                     319              MOVE.W  D1,D3
+00001170  0643 0080                320              ADD.W   #PJANCHO,D3
+00001174                           321  
+00001174                           322                  ;DEFINIR ALTURA RECTANGULO
+00001174  343C 01EC                323              MOVE.W  #PJY-PJALTO/2,D2
+00001178  383C 01FC                324              MOVE.W  #PJY+PJALTO/2,D4
+0000117C                           325              
+0000117C                           326              ;DIBUJAR RECTANGULO
+0000117C  103C 0057                327              MOVE.B  #87,D0
+00001180  4E4F                     328              TRAP    #15
+00001182                           329              
+00001182  4CDF 001F                330              MOVEM.L  (A7)+,D0-D4
+00001186                           331              
+00001186  4E75                     332              RTS
+00001188                           333              
+00001188                           334              
+00001188                           335              
+00001188                           336  
+00001188                           337  -------------------- end include --------------------
+00001188                           338      INCLUDE "LASER.X68"     ; LASER DEL JUGADOR
+00001188                           339  ; LASER
+00001188                           340  LASINIT
+00001188                           341  ; INICIALIZAR EL LASER
+00001188                           342  ; INPUT     : NONE
+00001188                           343  ; OUTPUT    : NONE
+00001188                           344  ; MODIFIES  : NONE
+00001188                           345  ; ----------------------------------------------------------
+00001188  33FC 0140 000012EE       346      MOVE.W  #SCRWIDTH/2,(LASPOSX)   ;DEFINIMOS X 
+00001190  33FC 01E4 000012F0       347      MOVE.W  #PJY-LASY,(LASPOSY) ;DEFINIMOS Y 
+00001198  33FC 0008 000012F2       348      MOVE.W  #LASSPEED,(LASVELY) ;VELOCIDAD LASER
+000011A0  4E75                     349      RTS
+000011A2                           350      
+000011A2                           351  LASUPD
+000011A2                           352  ; ACTUALIZAR EL LASER
+000011A2                           353  ; INPUT     : NONE
+000011A2                           354  ; OUTPUT    : NONE
+000011A2                           355  ; MODIFIES  : NONE
+000011A2                           356  ; ----------------------------------------------------------
+000011A2                           357  
+000011A2  48E7 C000                358              MOVEM.L D0-D1,-(A7)
+000011A6                           359      
+000011A6                           360              ;SI SE HA PULSADO LA TECLA SPACE, MOVER EL LASER A LA POSICION DEL JUGADOR
+000011A6  0839 0004 000012FB       361              BTST.B  #4,(KBDEDGE)     ;SI SE HA PULSADO
+000011AE  6700 001E                362              BEQ     .SEGUIR
+000011B2  3039 000012F4            363              MOVE.W  (PJPOSX),D0
+000011B8  33C0 000012EE            364              MOVE.W  D0,(LASPOSX)
+000011BE  323C 01E4                365              MOVE.W  #PJY-PJALTO,D1
+000011C2  33C1 000012F0            366              MOVE.W  D1,(LASPOSY)
+000011C8  5279 000012F8            367              ADDQ.W  #1,(SCOOUT)
+000011CE                           368      
+000011CE                           369              ;ACTUALIZAR POSICION LASER
+000011CE  3039 000012F0            370  .SEGUIR     MOVE.W  (LASPOSY),D0
+000011D4  9079 000012F2            371              SUB.W   (LASVELY),D0
+000011DA                           372              
+000011DA                           373      
+000011DA                           374      
+000011DA                           375              ;GUARDAR POSICION
+000011DA  33C0 000012F0            376              MOVE.W  D0,(LASPOSY)
+000011E0                           377      
+000011E0  4CDF 0003                378              MOVEM.L (A7)+,D0-D1
+000011E4                           379      
+000011E4  4E75                     380              RTS
+000011E6                           381  
+000011E6                           382  LASPLOT
+000011E6                           383  ; ACTUALIZAR GRAFICAMENTE EL SALER
+000011E6                           384  ; INPUT     : NONE
+000011E6                           385  ; OUTPUT    : NONE
+000011E6                           386  ; MODIFIES  : NONE
+000011E6                           387  ; ----------------------------------------------------------
+000011E6                           388  
+000011E6  48E7 F800                389      MOVEM.L D0-D4,-(A7)
+000011EA                           390      
+000011EA                           391      ;DEFINIR COLOR CONTORNO
+000011EA  103C 0050                392      MOVE.B  #80,D0
+000011EE  223C 00FFFFFF            393      MOVE.L  #LASCOLOR,D1
+000011F4  4E4F                     394      TRAP    #15
+000011F6                           395                          
+000011F6                           396      ;DEFINIR COLOR RELLENO
+000011F6  103C 0051                397      MOVE.B  #81,D0
+000011FA  223C 0000FFFF            398      MOVE.L  #LASFILL,D1
+00001200  4E4F                     399      TRAP    #15
+00001202                           400      
+00001202                           401      ;DEFINIR COORDENADAS
+00001202                           402              
+00001202                           403          ;DEFINIR ANCHURA LASER
+00001202  3239 000012EE            404      MOVE.W  (LASPOSX),D1
+00001208  5541                     405      SUB.W   #LASX/2,D1
+0000120A  3601                     406      MOVE.W  D1,D3
+0000120C  5843                     407      ADD.W   #LASX,D3
+0000120E                           408              
+0000120E                           409          ;DEFINIR ALTURA LASER
+0000120E  3439 000012F0            410      MOVE.W  (LASPOSY),D2
+00001214  5142                     411      SUB.W   #LASY/2,D2
+00001216  3802                     412      MOVE.W  D2,D4
+00001218  0644 0010                413      ADD.W   #LASY,D4
+0000121C                           414              
+0000121C                           415              ;DIBUJAR RECTANGULO
+0000121C  103C 0057                416      MOVE.B  #87,D0
+00001220  4E4F                     417      TRAP    #15
+00001222                           418  
+00001222  4CDF 001F                419      MOVEM.L (A7)+,D0-D4
+00001226                           420      
+00001226  4E75                     421      RTS
+00001228                           422  
+00001228                           423  
+00001228                           424  
+00001228                           425  -------------------- end include --------------------
+00001228                           426      INCLUDE "LASERBAD.X68"  ; LASER DE LOS ENEMIGOS
+00001228                           427  ; LASERBAD
+00001228                           428  
+00001228                           429  LASBINIT
+00001228                           430  ; INICIALIZAR EL LASER DEL ENEMIGO
+00001228                           431  ; INPUT     : NONE
+00001228                           432  ; OUTPUT    : NONE
+00001228                           433  ; MODIFIES  : NONE
+00001228                           434  ; ----------------------------------------------------------
+00001228  4E75                     435      RTS
+0000122A                           436      
+0000122A                           437  LASBUPD
+0000122A                           438  ; ACTUALIZAR EL LASER DEL ENEMIGO
+0000122A                           439  ; INPUT     : NONE
+0000122A                           440  ; OUTPUT    : NONE
+0000122A                           441  ; MODIFIES  : NONE
+0000122A                           442  ; ----------------------------------------------------------
+0000122A  4E75                     443      RTS
+0000122C                           444      
+0000122C                           445  LASBPLOT
+0000122C                           446  ; ACTUALIZAR GRAFICAMENTE EL LASER DEL ENEMIGO
+0000122C                           447  ; INPUT     : NONE
+0000122C                           448  ; OUTPUT    : NONE
+0000122C                           449  ; MODIFIES  : NONE
+0000122C                           450  ; ----------------------------------------------------------
+0000122C  4E75                     451      RTS
+0000122C  4E75                     452  -------------------- end include --------------------
+0000122E                           453      INCLUDE "SCORE.X68"     ; PUNTUACION
+0000122E                           454  ; SCORE
+0000122E                           455  SCOINIT
+0000122E                           456  ; INICIALIZAR EL MARCADOR
+0000122E                           457  ; INPUT     : NONE
+0000122E                           458  ; OUTPUT    : NONE
+0000122E                           459  ; MODIFIES  : NONE
+0000122E                           460  ; ----------------------------------------------------------
+0000122E  4279 000012F6            461              CLR.W   (SCOIN)
+00001234  4279 000012F8            462              CLR.W   (SCOOUT)
+0000123A  4E75                     463              RTS
+0000123C                           464      
+0000123C                           465  SCOPLOT
+0000123C                           466  ; ACTUALIZAR GRAFICAMENTE EL MARCADOR
+0000123C                           467  ; INPUT     : NONE
+0000123C                           468  ; OUTPUT    : NONE
+0000123C                           469  ; MODIFIES  : NONE
+0000123C                           470  ; ----------------------------------------------------------
+0000123C                           471  
+0000123C  48E7 C040                472              MOVEM.L D0-D1/A1,-(A7)
+00001240                           473              ;DEFINIR COLOR DE FONDO
+00001240  103C 0051                474              MOVE.B  #81,D0
+00001244  7200                     475              MOVE.L  #SCOFILL,D1
+00001246  4E4F                     476              TRAP    #15
+00001248                           477              
+00001248                           478              ;DEFINIR COODENADAS DONDE SE IMPRIME EL TEXTO 1
+00001248  103C 000B                479              MOVE.B  #11,D0
+0000124C  323C 0101                480              MOVE.W  #SCOLINE1,D1
+00001250  4E4F                     481              TRAP    #15
+00001252                           482              
+00001252                           483              ;IMPRIMIR SCORE
+00001252  43F9 0000128A            484              LEA     .TXT1,A1
+00001258  4281                     485              CLR.L   D1
+0000125A  3239 000012F6            486              MOVE.W  (SCOIN),D1
+00001260  103C 0011                487              MOVE.B  #17,D0
+00001264  4E4F                     488              TRAP    #15
+00001266                           489              
+00001266                           490              ;DEFINIR COODENADAS DONDE SE IMPRIME EL TEXTO 2
+00001266  103C 000B                491              MOVE.B  #11,D0
+0000126A  323C 1001                492              MOVE.W  #SCOLINE2,D1
+0000126E  4E4F                     493              TRAP    #15
+00001270                           494              
+00001270                           495              ;IMPRIMIR MAXSCORE
+00001270  43F9 00001296            496              LEA     .TXT2,A1
+00001276  4281                     497              CLR.L   D1
+00001278  3239 000012F8            498              MOVE.W  (SCOOUT),D1
+0000127E  103C 0011                499              MOVE.B  #17,D0
+00001282  4E4F                     500              TRAP    #15
+00001284                           501              
+00001284  4CDF 0203                502              MOVEM.L (A7)+,D0-D1/A1
+00001288                           503              
+00001288  4E75                     504              RTS
+0000128A= 53 43 4F 52 45 20 ...    505  .TXT1       DC.B        'SCORE     :',0
+00001296= 4D 41 58 20 53 43 ...    506  .TXT2       DC.B        'MAX SCORE :',0
+000012A2                           507  
+000012A2                           508  -------------------- end include --------------------
+000012A2                           509      
+000012A2                           510      
+000012A2                           511      
+000012A2                           512  START:
+000012A2                           513  ; --- INICIALIZAR ------------------------------------------
+000012A2  007C 0700                514              ORI.W  #$0700,SR    ;DESACTIVAR INTERRUPCIONES
+000012A6  4EB8 1000                515              JSR     SYSINIT
+000012AA  4EB8 10F4                516              JSR     PJINIT
+000012AE  4EB8 122E                517              JSR     SCOINIT
+000012B2  4EB8 1188                518              JSR     LASINIT
+000012B6  4EB8 1228                519              JSR     LASBINIT
+000012BA                           520  .LOOP
+000012BA                           521  
+000012BA                           522  ; --- UPDATE -----------------------------------------------
+000012BA                           523  
+000012BA                           524  ; LECTURA DISPOSITIVOS DE ENTRADA
+000012BA  4E41                     525              TRAP    #KBDUPTN
+000012BC                           526  
+000012BC                           527  ; UPDATE GAME LOGIC
+000012BC                           528  
+000012BC  4EB8 11A2                529              JSR     LASUPD
+000012C0  4EB8 122A                530              JSR     LASBUPD
+000012C4  4EB8 10FE                531              JSR     PJUPD
+000012C8                           532  
+000012C8                           533  ; --- SYNCRONIZAR (PARA EL FRAMERATE) ----------------------
+000012C8                           534  
+000012C8  4A39 000012FC            535  .WINT       TST.B   (SCRINTCT)
+000012CE  67F8                     536              BEQ     .WINT
+000012D0  4239 000012FC            537              CLR.B   (SCRINTCT)
+000012D6                           538  
+000012D6                           539  ; --- DIBUJAR PANTALLA -------------------------------------
+000012D6                           540  
+000012D6  4EB8 123C                541              JSR     SCOPLOT
+000012DA  4EB8 11E6                542              JSR     LASPLOT
+000012DE  4EB8 122C                543              JSR     LASBPLOT
+000012E2  4EB8 1148                544              JSR     PJPLOT
+000012E6                           545              
+000012E6  4E40                     546              TRAP    #SCRUPTN
+000012E8                           547              
+000012E8                           548              
+000012E8  60D0                     549              BRA     .LOOP
+000012EA                           550  
+000012EA  FFFF FFFF                551              SIMHALT                 ; halt simulator
+000012EE                           552  
+000012EE                           553  
+000012EE                           554              INCLUDE "VARS.X68"      ; Variables del juego
+000012EE                           555  ;   VARIABLES DEL JUEGO
+000012EE                           556  
+000012EE                           557  ; --- LASER JUGADOR ----------------------------------------
+000012EE                           558     
+000012EE                           559  LASPOSX     DS.W    1       ; COORDENADAS LASER X
+000012F0                           560  LASPOSY     DS.W    1       ; COORDENADAS LASER Y
+000012F2                           561  LASVELY     DS.W    1       ; VELOCIDAD VERTICAL LASER
+000012F4                           562  
+000012F4                           563  ; --- VARIABLES JUGADOR ------------------------------------
+000012F4                           564  
+000012F4                           565  PJPOSX      DS.W    1       ; POSICION JUGADOR
+000012F6                           566  
+000012F6                           567  
+000012F6                           568  
+000012F6                           569  ; --- SCOREBOARD VARIABLES ---------------------------------
+000012F6                           570  
+000012F6                           571  SCOIN       DS.W    1       ; PUNTOS GANADOS (ENEMIGOS MATADOS)
+000012F8                           572  SCOOUT      DS.W    1       ; PUNTOS PERDIDOS (MUERTES)(OPCIONAL)
+000012FA                           573  
+000012FA                           574  -------------------- end include --------------------
+000012FA                           575              INCLUDE "SYSVAR.X68"    ; Variables sistema
+000012FA                           576  ;   VARIABLES DEL SISTEMA
+000012FA                           577  
+000012FA                           578  
+000012FA                           579  ; --- VARIABLES DE TECLADO  --------------------------------
+000012FA                           580  
+000012FA                           581  KBDVAL      DS.B    1           ; ESTADO DE TODAS LAS TECLAS
+000012FB                           582  KBDEDGE     DS.B    1           ; SI SE ACABA DE PULSAR UNA TECLA
+000012FC                           583  
+000012FC                           584  ; --- VARIABLES DE SINCRONIZACION DE TIEMPO (FPS)  ---------
+000012FC                           585  
+000012FC                           586  SCRINTCT    DS.B    1           ;CONTADOR DE INTERRUPCION
+000012FE                           587              DS.W    0
+000012FE                           588  -------------------- end include --------------------
+000012FE                           589  
+000012FE                           590              END    START            ; last line of source
 
 No errors detected
 No warnings generated
@@ -561,62 +600,69 @@ No warnings generated
 SYMBOL TABLE INFORMATION
 Symbol-name         Value
 -------------------------
+FPS                 3C
 KBDDOWN             28
-KBDEDGE             12C7
+KBDEDGE             12FB
 KBDFIRE1            20
 KBDFIRE2            4D
 KBDFIRE3            10
-KBDINIT             106C
+KBDINIT             1094
 KBDLEFT             25
 KBDPAUSE            50
 KBDRIGHT            27
 KBDUP               26
-KBDUPD              107A
-KBDUPD:LOOP         10C2
-KBDUPD:PACK         10BE
-KBDVAL              12C6
-LASBINIT            11FA
-LASBPLOT            11FE
-LASBUPD             11FC
+KBDUPD              10A2
+KBDUPD:LOOP         10EA
+KBDUPD:PACK         10E6
+KBDUPTN             1
+KBDVAL              12FA
+LASBINIT            1228
+LASBPLOT            122C
+LASBUPD             122A
 LASCOLOR            FFFFFF
 LASFILL             FFFF
-LASINIT             1160
-LASPLOT             11B8
-LASPOSX             12BA
-LASPOSY             12BC
-LASSPEED            3
-LASUPD              117A
-LASUPD:SEGUIR       11A0
-LASVELY             12BE
+LASINIT             1188
+LASPLOT             11E6
+LASPOSX             12EE
+LASPOSY             12F0
+LASSPEED            8
+LASUPD              11A2
+LASUPD:SEGUIR       11CE
+LASVELY             12F2
 LASX                4
 LASY                10
 PJALTO              10
 PJANCHO             80
 PJCOLOR             FF0000
 PJFILL              FF
-PJINIT              10CC
-PJPLOT              1120
-PJPOSX              12C0
+PJINIT              10F4
+PJPLOT              1148
+PJPOSX              12F4
 PJSPEED             7
-PJUPD               10D6
-PJUPD:CHKLEFT       10EC
-PJUPD:CONT          10FA
-PJUPD:CONT2         110A
-PJUPD:DONE          1116
+PJUPD               10FE
+PJUPD:CHKLEFT       1114
+PJUPD:CONT          1122
+PJUPD:CONT2         1132
+PJUPD:DONE          113E
 PJY                 1F4
 SCOFILL             0
-SCOIN               12C2
-SCOINIT             1200
+SCOIN               12F6
+SCOINIT             122E
 SCOLINE1            101
 SCOLINE2            1001
-SCOOUT              12C4
-SCOPLOT             120E
-SCOPLOT:TXT1        125C
-SCOPLOT:TXT2        1268
+SCOOUT              12F8
+SCOPLOT             123C
+SCOPLOT:TXT1        128A
+SCOPLOT:TXT2        1296
 SCRHEIGHT           280
-SCRINIT             1024
-SCRPLOT             1052
+SCRINIT             102C
+SCRINTCT            12FC
+SCRINTN             1
+SCRPLOT             1072
+SCRTIM              108C
+SCRUPTN             0
 SCRWIDTH            280
-START               1274
-START:LOOP          128C
+START               12A2
+START:LOOP          12BA
+START:WINT          12C8
 SYSINIT             1000

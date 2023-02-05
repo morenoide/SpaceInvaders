@@ -94,7 +94,7 @@ SCRTIM
 ; OUTPUT    : NONE
 ; MODIFIES  : NONE
 ; ----------------------------------------------------------
-        ADD.Q   #1,(SCRINTCT)        
+        ADDQ.B   #1,(SCRINTCT)        
         RTE
         
 ; ----------------------------------------------------------
@@ -164,6 +164,7 @@ KBDUPD
         ROXL.B  #1,D2
         DBRA.W  D3,.LOOP
         RTS   
+
 
 
 
