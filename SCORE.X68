@@ -32,7 +32,7 @@ SCOPLOT
             ;IMPRIMIR SCORE
             LEA     .TXT1,A1
             CLR.L   D1
-            MOVE.W  (SCOIN),D1
+            MOVE.W  (FPSSHOW),D1
             MOVE.B  #17,D0
             TRAP    #15
             
@@ -53,6 +53,7 @@ SCOPLOT
             RTS
 .TXT1       DC.B        'SCORE     :',0
 .TXT2       DC.B        'MAX SCORE :',0
+
 
 *~Font name~Courier New~
 *~Font size~12~

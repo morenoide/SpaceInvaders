@@ -16,9 +16,11 @@ SYSINIT
         MOVE.L  #SCRPLOT,($80+SCRUPTN*4)
         MOVE.L  #KBDUPD,($80+KBDUPTN*4)
         MOVE.L  #SCRTIM,($60+SCRINTN*4)   ;INTERRUPCION #1
-            
+        MOVE.L  #FPSCOUNTI,($60+FPSTN*4)  ;INTERRUPCION CONTADOR FRAMES SEC
+    
         MOVE.W  SR,-(A7)
-        ANDI.W  #$D8FF,(A7)     ;ACTIVAR INTERRUPCIONES
+        ANDI.W  #$D8FF,(A7)     ;ACTIVAR INTERRUPCIONES 
+        
         RTE
     
 ; ----------------------------------------------------------
@@ -56,11 +58,21 @@ SCRINIT
         MOVE.B  #32,D0
         MOVE.B  #6,D1
         MOVE.B  #$80|SCRINTN,D2
-        MOVE.B  #1000/FPS,D3
+        MOVE.L  #1000/FPS,D3
+        TRAP    #15
+        
+        ;ENABLE CONTADOR SEC
+        MOVE.B  #32,D0
+        MOVE.B  #6,D1
+        MOVE.B  #$80|FPSTN,D2
+        MOVE.L  #1000,D3
         TRAP    #15
         
         ;CLEAR INTERRUPT COUNTER
         CLR.B   (SCRINTCT)
+        
+        ;CLEAR CONTADOR FPS
+        CLR.W   (FPSCOUNT)
         
         
         ;RESTAURAR LOS REGISTROS A SU ESTADO ANTERIOR A MODIFICACION
@@ -96,7 +108,21 @@ SCRTIM
 ; ----------------------------------------------------------
         ADDQ.B   #1,(SCRINTCT)        
         RTE
-        
+; ----------------------------------------------------------        
+FPSCOUNTI
+; RUTINA DE INTERRUPCION CONTROLADA SEGUNDO
+; INPUT     : NONE
+; OUTPUT    : NONE
+; MODIFIES  : NONE
+; ----------------------------------------------------------        
+            MOVE.W D0,-(A7)
+            
+            MOVE.W  (FPSCOUNT),D0
+            MOVE.W  D0,(FPSSHOW)
+            CLR.W   (FPSCOUNT) 
+            
+            MOVE.W  (A7)+,D0        
+        RTE        
 ; ----------------------------------------------------------
 KBDINIT
 ; INICIALIZAR TECLADO
@@ -164,6 +190,7 @@ KBDUPD
         ROXL.B  #1,D2
         DBRA.W  D3,.LOOP
         RTS   
+
 
 
 

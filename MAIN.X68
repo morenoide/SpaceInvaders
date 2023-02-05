@@ -36,12 +36,14 @@ START:
             JSR     LASUPD
             JSR     LASBUPD
             JSR     PJUPD
+; --- AUMENTAR CONTADOR FRAMES -----------------------------
+            ADDQ.W  #1,(FPSCOUNT)
 
 ; --- SYNCRONIZAR (PARA EL FRAMERATE) ----------------------
-
 .WINT       TST.B   (SCRINTCT)
             BEQ     .WINT
             CLR.B   (SCRINTCT)
+            
 
 ; --- DIBUJAR PANTALLA -------------------------------------
 
@@ -51,6 +53,8 @@ START:
             JSR     PJPLOT
             
             TRAP    #SCRUPTN
+            
+
             
             
             BRA     .LOOP
@@ -62,6 +66,7 @@ START:
             INCLUDE "SYSVAR.X68"    ; Variables sistema
 
             END    START            ; last line of source
+
 
 
 

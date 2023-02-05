@@ -27,6 +27,7 @@ KBDUPTN     EQU     1       ; TRAP ACTUALIZAR TECLADO
 ; --- INTERRUPT NUMBERS ------------------------------------
 
 SCRINTN     EQU     1       ; NUMERO INTERRUPCION
+FPSTN       EQU     2       ; INTERRUPCION CONTADOR FPS
 
 
 
