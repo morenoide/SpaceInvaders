@@ -12,12 +12,16 @@ LASVELY     DS.W    1       ; VELOCIDAD VERTICAL LASER
 
 PJPOSX      DS.W    1       ; POSICION JUGADOR
 
+; --- VARIABLES ENEMIGO ------------------------------------
 
-
+ENEPOSX     DS.W    1       ; POSICION ENEMIGO
+ENEPOSY     DS.W    1       ;
+ENEVEL      DS.W    1       ; VELOCIDAD ENEMIGO
 ; --- SCOREBOARD VARIABLES ---------------------------------
 
 SCOIN       DS.W    1       ; PUNTOS GANADOS (ENEMIGOS MATADOS)
 SCOOUT      DS.W    1       ; PUNTOS PERDIDOS (MUERTES)(OPCIONAL)
+
 
 *~Font name~Courier New~
 *~Font size~12~

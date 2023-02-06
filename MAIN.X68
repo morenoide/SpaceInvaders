@@ -13,6 +13,7 @@
     INCLUDE "LASER.X68"     ; LASER DEL JUGADOR
     INCLUDE "LASERBAD.X68"  ; LASER DE LOS ENEMIGOS
     INCLUDE "SCORE.X68"     ; PUNTUACION
+    INCLUDE "ENEMIGO.X68"   ; ENEMIGO DEL JUEGO
     
     
     
@@ -24,6 +25,7 @@ START:
             JSR     SCOINIT
             JSR     LASINIT
             JSR     LASBINIT
+            JSR     ENEINIT
 .LOOP
 
 ; --- UPDATE -----------------------------------------------
@@ -36,6 +38,8 @@ START:
             JSR     LASUPD
             JSR     LASBUPD
             JSR     PJUPD
+            JSR     ENEUPD
+            
 ; --- AUMENTAR CONTADOR FRAMES -----------------------------
             ADDQ.W  #1,(FPSCOUNT)
 
@@ -51,6 +55,7 @@ START:
             JSR     LASPLOT
             JSR     LASBPLOT
             JSR     PJPLOT
+            JSR     ENEPLOT
             
             TRAP    #SCRUPTN
             
@@ -66,6 +71,7 @@ START:
             INCLUDE "SYSVAR.X68"    ; Variables sistema
 
             END    START            ; last line of source
+
 
 
 

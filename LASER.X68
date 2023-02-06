@@ -28,7 +28,7 @@ LASUPD
             MOVE.W  D0,(LASPOSX)
             MOVE.W  #PJY-PJALTO,D1
             MOVE.W  D1,(LASPOSY)
-            ADDQ.W  #1,(SCOOUT)
+            ;ADDQ.W  #1,(SCOOUT)
     
             ;ACTUALIZAR POSICION LASER
 .SEGUIR     MOVE.W  (LASPOSY),D0
@@ -83,6 +83,7 @@ LASPLOT
     MOVEM.L (A7)+,D0-D4
     
     RTS
+
 
 
 
