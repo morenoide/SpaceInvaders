@@ -1,5 +1,7 @@
 *-----------------------------------------------------------
-; LASER
+; LASER (AGENTE)
+; LASPOSX (W)   (A0)
+; LASPOSY (W)   2(AO)
 *-----------------------------------------------------------
 LASINIT
 ; INICIALIZAR EL LASER
@@ -7,9 +9,10 @@ LASINIT
 ; OUTPUT    : NONE
 ; MODIFIES  : NONE
 ; ----------------------------------------------------------
-    MOVE.W  #SCRWIDTH/2,(LASPOSX)   ;DEFINIMOS X 
-    MOVE.W  #PJY-LASY,(LASPOSY) ;DEFINIMOS Y 
-    MOVE.W  #LASSPEED,(LASVELY) ;VELOCIDAD LASER
+    MOVE.W  (PJPOSX),D0
+    SUB.W   #LASX/2,D0
+    MOVE.W  D0,(A0)        ;DEFINIMOS X 
+    MOVE.W  #PJY-LASY,2(A0) ;DEFINIMOS Y 
     RTS
     
 LASUPD
@@ -22,22 +25,36 @@ LASUPD
             MOVEM.L D0-D1,-(A7)
     
             ;SI SE HA PULSADO LA TECLA SPACE, MOVER EL LASER A LA POSICION DEL JUGADOR
-            BTST.B  #4,(KBDEDGE)     ;SI SE HA PULSADO
-            BEQ     .SEGUIR
-            MOVE.W  (PJPOSX),D0
-            MOVE.W  D0,(LASPOSX)
-            MOVE.W  #PJY-PJALTO,D1
-            MOVE.W  D1,(LASPOSY)
-            ;ADDQ.W  #1,(SCOOUT)
+*            BTST.B  #4,(KBDEDGE)     ;SI SE HA PULSADO
+*            BEQ     .SEGUIR
+
+            ;AL PULSAR, SE MUEVE EL LASER
+*            MOVE.W  (PJPOSX),D0
+*            MOVE.W  D0,(LASPOSX)
+*            MOVE.W  #PJY-PJALTO,D1
+*            MOVE.W  D1,(LASPOSY)
+            
+*            ;EFECTO DE SONIDO
+*            MOVE.B  #SNDSHOOT,D7
+*            TRAP    #SNDPLTN
+            
+            ;SI X < 0, KILL
+            TST.W   2(A0)
+            BGT     .SEGUIR
+            
+            JSR     AGLKILL
+            
     
             ;ACTUALIZAR POSICION LASER
-.SEGUIR     MOVE.W  (LASPOSY),D0
-            SUB.W   (LASVELY),D0
+.SEGUIR     MOVE.W  2(A0),D0
+            SUB.W   #LASSPEED,D0
+            ;SUB.W   (LASVELY),D0
+            
             
     
     
             ;GUARDAR POSICION
-            MOVE.W  D0,(LASPOSY)
+            MOVE.W  D0,2(A0)
     
             MOVEM.L (A7)+,D0-D1
     
@@ -65,13 +82,13 @@ LASPLOT
     ;DEFINIR COORDENADAS
             
         ;DEFINIR ANCHURA LASER
-    MOVE.W  (LASPOSX),D1
+    MOVE.W  (A0),D1
     SUB.W   #LASX/2,D1
     MOVE.W  D1,D3
     ADD.W   #LASX,D3
             
         ;DEFINIR ALTURA LASER
-    MOVE.W  (LASPOSY),D2
+    MOVE.W  2(A0),D2
     SUB.W   #LASY/2,D2
     MOVE.W  D2,D4
     ADD.W   #LASY,D4
@@ -83,6 +100,8 @@ LASPLOT
     MOVEM.L (A7)+,D0-D4
     
     RTS
+
+
 
 
 

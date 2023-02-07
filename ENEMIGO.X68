@@ -1,15 +1,29 @@
 *-----------------------------------------------------------
-; ENEMIGO
+; ENEMIGO (AGENTE)
+; ENEPOSX   (A0)
+; ENEPOSY   2(A0)
+; ENEVEL    4(A0)
 *-----------------------------------------------------------
 ENEINIT
 ; INICIALIZAR EL ENEMIGO
-; INPUT     : NONE
+; INPUT     : D1,D2 = X,Y
 ; OUTPUT    : NONE
 ; MODIFIES  : NONE
 ; ----------------------------------------------------------
-    MOVE.W  #5+ENEANCHO,(ENEPOSX)   ;DEFINIMOS X 
-    MOVE.W  #100+ENEALTO,(ENEPOSY) ;DEFINIMOS Y 
-    MOVE.W  #ENESPEED,(ENEVEL) ;VELOCIDAD LASER
+
+
+    ;#D1*(ANCHO + MARGEN [5]),(A0) DEFINIMOS X
+    MULU.W  #ENEANCHO+5,D1
+    MOVE.W  D1,(A0)
+*    MOVE.W  #5+ENEANCHO*D1,(A0)   ;DEFINIMOS X 
+*    MOVE.W  #100+ENEALTO*D2,2(A0) ;DEFINIMOS Y
+
+    ;#D2*(ALTO + MARGEN [15]),2(A0) DEFINIMOS Y
+    MULU.W  #ENEALTO+15,D2
+    ADD.W   #100,D2
+    MOVE.W  D2,2(A0)
+    
+    MOVE.W  #ENESPEED,4(A0) ;VELOCIDAD LASER
     RTS
 
 ; ----------------------------------------------------------    
@@ -23,9 +37,9 @@ ENEUPD
             MOVEM.L D0-D3,-(A7)
     
             ;ACTUALIZAR POSICION LASER
-            MOVE.W  (ENEPOSX),D0
-            MOVE.W  (ENEPOSY),D1
-            ADD.W   (ENEVEL),D0
+            MOVE.W  (A0),D0
+            MOVE.W  2(A0),D1
+            ADD.W   4(A0),D0
             
             ; CHECK HORIZONTAL COLISIONS
             CMP.W   #SCRWIDTH-ENEANCHO/2,D0
@@ -34,13 +48,13 @@ ENEUPD
             BLT     .COL
             BRA     .CHK
             
-.COL        NEG.W   (ENEVEL)
+.COL        NEG.W   4(A0)
             ADD.W   #ENEYSPEED,D1
 
             ;CHECK SI LE HA DADO UN LASER
                 ;X LASER
-.CHK        MOVE.W  (ENEPOSX),D2
-            MOVE.W  (LASPOSX),D3
+.CHK        MOVE.W  (A0),D2
+            MOVE.W  (A0),D3
             
             SUB.W   #ENEALTO/2,D2
             CMP.W   D2,D3
@@ -51,8 +65,8 @@ ENEUPD
             BGT     .DONE
             
                 ;Y LASER        
-            MOVE.W  (ENEPOSY),D2
-            MOVE.W  (LASPOSY),D3 
+            MOVE.W  2(A0),D2
+            MOVE.W  2(A0),D3 
             
             SUB.W   #ENEANCHO/2,D2
             CMP     D2,D3
@@ -65,8 +79,8 @@ ENEUPD
             ADDQ.W  #1,(SCOOUT)
             
             ;GUARDAR POSICION
-.DONE       MOVE.W  D0,(ENEPOSX)
-            MOVE.W  D1,(ENEPOSY)
+.DONE       MOVE.W  D0,(A0)
+            MOVE.W  D1,2(A0)
     
             MOVEM.L (A7)+,D0-D3
     
@@ -95,13 +109,13 @@ ENEPLOT
     ;DEFINIR COORDENADAS
             
         ;DEFINIR ANCHURA
-    MOVE.W  (ENEPOSX),D1
+    MOVE.W  (A0),D1
     SUB.W   #ENEANCHO/2,D1
     MOVE.W  D1,D3
     ADD.W   #ENEANCHO,D3
             
         ;DEFINIR ALTURA
-    MOVE.W  (ENEPOSY),D2
+    MOVE.W  2(A0),D2
     SUB.W   #ENEALTO/2,D2
     MOVE.W  D2,D4
     ADD.W   #ENEALTO,D4
@@ -113,6 +127,7 @@ ENEPLOT
     MOVEM.L (A7)+,D0-D4
     
     RTS
+
 
 
 

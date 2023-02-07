@@ -21,8 +21,24 @@ PJUPD
             
             MOVE.W  D0,-(A7)
             
+            ;SI SE HA PULSADO LA TECLA SPACE, MOVER EL LASER A LA POSICION DEL JUGADOR
+            BTST.B  #4,(KBDEDGE)     ;SI SE HA PULSADO
+            BEQ     .SEGUIR
+            
+            ;CREAR UN LASER NUEVO
+            LEA     LASINIT,A1
+            LEA     LASUPD,A2
+            LEA     LASPLOT,A3
+            MOVE.W  #LASID,D0
+            JSR     AGLADD
+            
+            ;EFECTO DE SONIDO
+            MOVE.B  #SNDSHOOT,D7
+            TRAP    #SNDPLTN
+
+            
             ;ACTUALIZAR POSICION JUGADOR
-            MOVE.W  (PJPOSX),D0
+.SEGUIR     MOVE.W  (PJPOSX),D0
             BTST.B  #0,(KBDVAL)
             BEQ     .CHKLEFT
             SUB.W   #PJSPEED,D0
@@ -42,6 +58,7 @@ PJUPD
 
             ;ACTUALIZAR VARIABLE
 .DONE       MOVE.W  D0,(PJPOSX)
+
 
             MOVE.W  (A7)+,D0            
 
@@ -88,6 +105,7 @@ PJPLOT
             
             
             
+
 
 *~Font name~Courier New~
 *~Font size~12~

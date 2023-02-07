@@ -10,6 +10,11 @@ LASCOLOR    EQU     $00ffffff       ; COLOR CONTORNO LASER
 LASFILL     EQU     $0000ffff       ; COLOR RELLENO LASER
 LASSPEED    EQU     8               ; VELOCIDAD LASER
 
+; --- AGENTES CONSTANTES -----------------------------------
+
+LASID       EQU     1               ;ID DE LOS LASERES
+ENEID       EQU     2               ;ID DE LOS LASERES
+
 ; --- JUGADOR VARIABLES ------------------------------------
 
 PJANCHO     EQU     128             ; ANCHURA JUGADOR
@@ -21,8 +26,8 @@ PJFILL      EQU     $000000FF       ; COLOR RELLENO JUGADOR
 
 ; --- CONSTANTES ENEMIGO -----------------------------------
 
-ENEANCHO    EQU     128
-ENEALTO     EQU     128
+ENEANCHO    EQU     32
+ENEALTO     EQU     32
 ENESPEED    EQU     1
 ENEYSPEED   EQU     32
 ENECOLOR    EQU     $00FFFF00
@@ -35,6 +40,9 @@ SCOLINE1    EQU     $0101           ; PRIMERA LINEA, SCORE ACTUAL
 SCOLINE2    EQU     $1001           ; SEGUNDA LINEA, SCORE MAX
 SCOLINE3    EQU     $0103           ; GOAL FPS TEXT
 SCOLINE4    EQU     $1003           ; ACTUAL FPS TEXT
+
+
+
 
 
 

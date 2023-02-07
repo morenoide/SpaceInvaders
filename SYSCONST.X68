@@ -6,7 +6,7 @@
 
 SCRWIDTH    EQU     640                 ;SCREEN WIDTH
 SCRHEIGHT   EQU     640                 ;SCREEN HEIGHT
-FPS         EQU     60                  ; FPS
+FPS         EQU     100                 ; FPS
 
 ; --- CODIGOS DE CARACTERES --------------------------------
 
@@ -19,18 +19,23 @@ KBDFIRE2    EQU     'M'     ; TECLA M
 KBDFIRE3    EQU     $10     ; TECLA SHIFT
 KBDPAUSE    EQU     'P'     ; TECLA P
 
+; --- ID SONIDOS -------------------------------------------
+
+SNDWALL     EQU     0
+SNDHIT      EQU     1
+SNDMISS     EQU     2
+SNDSHOOT    EQU     3
+
 ; --- TRAP NUMBER ------------------------------------------
 
 SCRUPTN     EQU     0       ; TRAP ACTUALIZAR PANTALLA
 KBDUPTN     EQU     1       ; TRAP ACTUALIZAR TECLADO
+SNDPLTN     EQU     2       ; TRAP PLAY SONIDO
 
 ; --- INTERRUPT NUMBERS ------------------------------------
 
 SCRINTN     EQU     1       ; NUMERO INTERRUPCION
 FPSTN       EQU     2       ; INTERRUPCION CONTADOR FPS
-
-
-
 
 *~Font name~Courier New~
 *~Font size~12~

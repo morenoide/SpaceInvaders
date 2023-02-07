@@ -9,20 +9,67 @@ SYSINIT
 ; OUTPUT    : NONE
 ; MODIFIES  : NONE
 ; ----------------------------------------------------------
-        JSR     SCRINIT
-        JSR     KBDINIT
-    
+
         ;METER EN EL TRAP 0 LA RUTINA PARA ACTUALIZAR LA PANTALLA
         MOVE.L  #SCRPLOT,($80+SCRUPTN*4)
         MOVE.L  #KBDUPD,($80+KBDUPTN*4)
+        MOVE.L  #SNDPLAY,($80+SNDPLTN*4)
         MOVE.L  #SCRTIM,($60+SCRINTN*4)   ;INTERRUPCION #1
         MOVE.L  #FPSCOUNTI,($60+FPSTN*4)  ;INTERRUPCION CONTADOR FRAMES SEC
+    
+        JSR     SCRINIT
+        JSR     KBDINIT
+        JSR     SNDINIT
+        JSR     DMMINIT
     
         MOVE.W  SR,-(A7)
         ANDI.W  #$D8FF,(A7)     ;ACTIVAR INTERRUPCIONES 
         
         RTE
-    
+; ----------------------------------------------------------
+SNDINIT
+; INICIALIZAR SISTEMA SONIDO
+; INPUT     : NONE
+; OUTPUT    : NONE
+; MODIFIES  : NONE
+; ----------------------------------------------------------
+            MOVEM.L D0-D1/A0-A1,-(A7)
+            
+            CLR.B   D1
+            LEA     .SNDLIST,A0
+.LOOP       MOVE.L  (A0)+,D0
+            BEQ     .DONE
+            MOVE.L  D0,A1
+            
+            MOVE.B  #71,D0
+            TRAP    #15
+            ADDQ.B  #1,D1
+            BRA     .LOOP
+            
+.DONE       MOVEM.L (A7)+,D0-D1/A0-A1
+            RTS
+            
+.SNDWALL    DC.B    'SND/WALL.wav',0
+.SNDHIT     DC.B    'SND/HIT.wav',0
+.SNDMISS    DC.B    'SND/MISS.wav',0
+.SNDSHOOT   DC.B    'SND/SHOOT.wav',0
+.SNDLIST    DC.L    .SNDWALL,.SNDHIT,.SNDMISS,.SNDSHOOT,0
+
+; ----------------------------------------------------------
+SNDPLAY
+; PLAY SONIDO
+; INPUT     : D7 SOUND ID
+; OUTPUT    : NONE
+; MODIFIES  : NONE
+; ----------------------------------------------------------
+            MOVEM.W D0-D1,-(A7)
+            
+            MOVE.B  #72,D0
+            MOVE.B  D7,D1
+            TRAP    #15
+            MOVEM.W (A7)+,D0-D1
+            
+            RTE      
 ; ----------------------------------------------------------
 SCRINIT
 ; INIT RESOLUCION PANTALLA, PONER MODO VENTANA, BORRAR PANTALLA
@@ -189,7 +236,8 @@ KBDUPD
 .LOOP   LSL.L   #8,D1
         ROXL.B  #1,D2
         DBRA.W  D3,.LOOP
-        RTS   
+        RTS
+
 
 
 
