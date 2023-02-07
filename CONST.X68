@@ -32,6 +32,8 @@ ENESPEED    EQU     1
 ENEYSPEED   EQU     32
 ENECOLOR    EQU     $00FFFF00
 ENEFILL     EQU     $00FF00FF
+ENENUMF     EQU     1
+ENENUMC     EQU     4
 
 ; --- CONSTANTES MARCADOR ----------------------------------
 
@@ -40,6 +42,18 @@ SCOLINE1    EQU     $0101           ; PRIMERA LINEA, SCORE ACTUAL
 SCOLINE2    EQU     $1001           ; SEGUNDA LINEA, SCORE MAX
 SCOLINE3    EQU     $0103           ; GOAL FPS TEXT
 SCOLINE4    EQU     $1003           ; ACTUAL FPS TEXT
+
+; --- TMP ----------------------------------------------
+; --- CONDITIONAL ASSEMBLY FLAGS ----------------------------------------------
+
+; SET THEM TO ZERO TO REMOVE GRAPHICAL "SUGAR" AND GAIN SPEED IF NECESSARY.
+
+CASSCRBG    EQU     1                       ; DRAW SCREEN BACKGROUND
+CASFULMM    EQU     1                       ; FULLY DRAW THE MINIMAP
+CASDETTL    EQU     1                       ; USE DETAILED TILES
+CASDETSP    EQU     1                       ; USE DETAILED SPRITES
+
+
 
 
 

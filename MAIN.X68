@@ -19,7 +19,9 @@
     INCLUDE "SCORE.X68"         ; PUNTUACION
     INCLUDE "ENEMIGO.X68"       ; ENEMIGO DEL JUEGO
     INCLUDE "GAME.X68"          ; LOGICA DEL JUEGO
-    
+    INCLUDE "GFX.X68"           ; GRAPHICS MANAGEMENT
+    INCLUDE "DATA/GFXDATA.X68"      ; GRAPHICS DATA
+
     
     
 START:
@@ -51,11 +53,11 @@ START:
 
 ; --- DIBUJAR PANTALLA -------------------------------------
 
-            JSR     GAMEPLOT
-            
-            TRAP    #SCRUPTN
+           JSR      GAMEPLOT
+                      
+           TRAP     #SCRUPTN
 
-            BRA     .LOOP
+           BRA      .LOOP  
 
             SIMHALT                 ; halt simulator
 
@@ -67,17 +69,6 @@ START:
             
 
             END    START            ; last line of source
-
-
-
-
-
-
-
-
-
-
-
 
 *~Font name~Courier New~
 *~Font size~12~

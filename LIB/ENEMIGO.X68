@@ -55,7 +55,7 @@ ENEUPD
             ;CHECK SI LE HA DADO UN LASER
                 ;X LASER
 .CHK        MOVE.W  (A0),D2
-            MOVE.W  (LASPOSX),D3
+            MOVE.W  (A0),D3
             
             SUB.W   #ENEALTO/2,D2
             CMP.W   D2,D3
@@ -67,7 +67,7 @@ ENEUPD
             
                 ;Y LASER        
             MOVE.W  2(A0),D2
-            MOVE.W  (LASPOSY),D3 
+            MOVE.W  2(A0),D3 
             
             SUB.W   #ENEANCHO/2,D2
             CMP     D2,D3
@@ -149,8 +149,6 @@ ENEPLOT
     MOVEM.L (A7)+,D0-D4/A2
     
     RTS
-
-
 
 
 

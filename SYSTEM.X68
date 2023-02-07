@@ -120,6 +120,7 @@ SCRINIT
         
         ;CLEAR CONTADOR FPS
         CLR.W   (FPSCOUNT)
+        CLR.B   (SCRCYCCT)
         
         
         ;RESTAURAR LOS REGISTROS A SU ESTADO ANTERIOR A MODIFICACION
@@ -153,7 +154,8 @@ SCRTIM
 ; OUTPUT    : NONE
 ; MODIFIES  : NONE
 ; ----------------------------------------------------------
-        ADDQ.B   #1,(SCRINTCT)        
+        ADDQ.B   #1,(SCRINTCT)
+        ADDQ.B   #1,(SCRCYCCT)    
         RTE
 ; ----------------------------------------------------------        
 FPSCOUNTI
@@ -237,6 +239,7 @@ KBDUPD
         ROXL.B  #1,D2
         DBRA.W  D3,.LOOP
         RTS
+
 
 
 
