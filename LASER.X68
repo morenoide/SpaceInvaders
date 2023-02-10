@@ -12,7 +12,7 @@ LASINIT
     MOVE.W  (PJPOSX),D0
     SUB.W   #LASX/2,D0
     MOVE.W  D0,(LASPOSX)        ;DEFINIMOS X 
-    MOVE.W  #PJY-LASY,(LASPOSY) ;DEFINIMOS Y 
+    MOVE.W  #0,(LASPOSY) ;DEFINIMOS Y 
     RTS
     
 LASUPD
@@ -95,6 +95,8 @@ LASPLOT
     MOVEM.L (A7)+,D0-D4
     
     RTS
+
+
 
 
 

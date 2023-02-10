@@ -1,26 +1,30 @@
 *-----------------------------------------------------------
-* Title      :
-* Written by :
-* Date       :
-* Description:
+* Title      :SQUAREINVADERS
+* Written by :Sergi Oliver Juarez
+*             Alejandro Moreno Jimenez
 *-----------------------------------------------------------
     ORG    $1000
     
-    INCLUDE "CONST.X68"         ; Constanstes, Colores, jugador, etc...
-    INCLUDE "SYSCONST.X68"      ; Ancho/Alto Pantalla etc...
+    INCLUDE "CONST.X68"             ; Constanstes, Colores, jugador, etc...
+    INCLUDE "SYSCONST.X68"          ; Ancho/Alto Pantalla etc...
+    INCLUDE "LIB/UTLCONST.X68"
     INCLUDE "LIB/DMMCONST.X68"
     INCLUDE "LIB/DMMCODE.X68"
-    INCLUDE "SYSTEM.X68"        ; INICIALIZACION PERIFERICOS ETC
+    INCLUDE "SYSTEM.X68"            ; INICIALIZACION PERIFERICOS ETC
     INCLUDE "LIB/AGLCODE.X68"
     INCLUDE "LIB/UTLCODE.X68"
-    INCLUDE "JUGADOR.X68"       ; BARRA DEL JUGADOR (PAD.X68)
-    INCLUDE "LASER.X68"         ; LASER DEL JUGADOR
-    INCLUDE "LASERBAD.X68"      ; LASER DE LOS ENEMIGOS
-    INCLUDE "SCORE.X68"         ; PUNTUACION
-    INCLUDE "ENEMIGO.X68"       ; ENEMIGO DEL JUEGO
-    INCLUDE "GAME.X68"          ; LOGICA DEL JUEGO
-    INCLUDE "GFX.X68"           ; GRAPHICS MANAGEMENT
+    INCLUDE "JUGADOR.X68"           ; BARRA DEL JUGADOR (PAD.X68)
+    INCLUDE "LASER.X68"             ; LASER DEL JUGADOR
+    INCLUDE "SCORE.X68"             ; PUNTUACION
+    INCLUDE "ENEMIGO.X68"           ; ENEMIGO DEL JUEGO
+    INCLUDE "GAME.X68"              ; LOGICA DEL JUEGO
+    INCLUDE "GFX.X68"               ; GRAPHICS MANAGEMENT
     INCLUDE "DATA/GFXDATA.X68"      ; GRAPHICS DATA
+    INCLUDE "INTRO.X68"
+    INCLUDE "INSTRUCTIONS.X68"
+    INCLUDE "WIN.X68"
+    INCLUDE "GOVER.X68"
+    INCLUDE "STATES.X68"
 
     
     
@@ -30,7 +34,7 @@ START:
             JSR     SYSINIT
             JSR     UTLINIT
             JSR     PJINIT
-            JSR     GAMEINIT     
+            JSR     STAINIT     
 .LOOP
 
 ; --- UPDATE -----------------------------------------------
@@ -40,7 +44,8 @@ START:
 
 ; UPDATE GAME LOGIC
 
-            JSR     GAMEUPD
+            JSR     STAUPD
+
             
 ; --- AUMENTAR CONTADOR FRAMES -----------------------------
             ADDQ.W  #1,(FPSCOUNT)
@@ -53,7 +58,8 @@ START:
 
 ; --- DIBUJAR PANTALLA -------------------------------------
 
-           JSR      GAMEPLOT
+           JSR     STAPLOT
+
                       
            TRAP     #SCRUPTN
 
@@ -69,6 +75,14 @@ START:
             
 
             END    START            ; last line of source
+
+
+
+
+
+
+
+
 
 *~Font name~Courier New~
 *~Font size~12~

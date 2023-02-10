@@ -21,21 +21,23 @@ KBDPAUSE    EQU     'P'     ; TECLA P
 
 ; --- ID SONIDOS -------------------------------------------
 
-SNDWALL     EQU     0
-SNDHIT      EQU     1
-SNDMISS     EQU     2
-SNDSHOOT    EQU     3
+SNDHIT      EQU     0
+SNDSHOOT    EQU     1
 
 ; --- TRAP NUMBER ------------------------------------------
 
 SCRUPTN     EQU     0       ; TRAP ACTUALIZAR PANTALLA
 KBDUPTN     EQU     1       ; TRAP ACTUALIZAR TECLADO
 SNDPLTN     EQU     2       ; TRAP PLAY SONIDO
+MOUSETRAP   EQU     3       ;TRAP MAUSE
 
 ; --- INTERRUPT NUMBERS ------------------------------------
 
 SCRINTN     EQU     1       ; NUMERO INTERRUPCION
 FPSTN       EQU     2       ; INTERRUPCION CONTADOR FPS
+
+
+
 
 *~Font name~Courier New~
 *~Font size~12~

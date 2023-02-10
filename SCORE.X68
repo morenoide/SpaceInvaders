@@ -7,7 +7,6 @@ SCOINIT
 ; OUTPUT    : NONE
 ; MODIFIES  : NONE
 ; ----------------------------------------------------------
-            CLR.W   (SCOIN)
             CLR.W   (SCOOUT)
             CLR.W   (FPSCOUNT)
             RTS
@@ -32,18 +31,6 @@ SCOPLOT
             
             ;IMPRIMIR SCORE
             LEA     .TXT1,A1
-            CLR.L   D1
-            MOVE.W  (SCOIN),D1
-            MOVE.B  #17,D0
-            TRAP    #15
-            
-            ;DEFINIR COODENADAS DONDE SE IMPRIME EL TEXTO 2
-            MOVE.B  #11,D0
-            MOVE.W  #SCOLINE2,D1
-            TRAP    #15
-            
-            ;IMPRIMIR MAXSCORE
-            LEA     .TXT2,A1
             CLR.L   D1
             MOVE.W  (SCOOUT),D1
             MOVE.B  #17,D0
@@ -79,9 +66,10 @@ SCOPLOT
 
 ;TEXTOS            
 .TXT1       DC.B        'SCORE     :',0
-.TXT2       DC.B        'MAX SCORE :',0
 .TXT3       DC.B        'GOAL FPS  :',0
 .TXT4       DC.B        'ACTUAL FPS:',0
+
+
 
 
 

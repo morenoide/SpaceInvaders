@@ -17,23 +17,23 @@ ENEID       EQU     2               ;ID DE LOS LASERES
 
 ; --- JUGADOR VARIABLES ------------------------------------
 
-PJANCHO     EQU     128             ; ANCHURA JUGADOR
+PJANCHO     EQU     64             ; ANCHURA JUGADOR
 PJALTO      EQU     16              ; ALTURA JUGADOR
 PJY         EQU     500             ; POSICION JUGADOR
 PJSPEED     EQU     7               ; VELOCIDAD JUGADOR
-PJCOLOR     EQU     $00FF0000       ; COLOR CONTORNO JUGADOR
-PJFILL      EQU     $000000FF       ; COLOR RELLENO JUGADOR
+PJCOLOR     EQU     $0000FFFF       ; COLOR CONTORNO JUGADOR
+PJFILL      EQU     $00000FFF       ; COLOR RELLENO JUGADOR
 
 ; --- CONSTANTES ENEMIGO -----------------------------------
 
 ENEANCHO    EQU     32
 ENEALTO     EQU     32
-ENESPEED    EQU     1
+ENESPEED    EQU     4
 ENEYSPEED   EQU     32
-ENECOLOR    EQU     $00FFFF00
-ENEFILL     EQU     $00FF00FF
-ENENUMF     EQU     1
-ENENUMC     EQU     4
+ENECOLOR    EQU     $0000AAFF
+ENEFILL     EQU     $000000FF
+ENENUMF     EQU     4
+ENENUMC     EQU     8
 
 ; --- CONSTANTES MARCADOR ----------------------------------
 
@@ -43,15 +43,25 @@ SCOLINE2    EQU     $1001           ; SEGUNDA LINEA, SCORE MAX
 SCOLINE3    EQU     $0103           ; GOAL FPS TEXT
 SCOLINE4    EQU     $1003           ; ACTUAL FPS TEXT
 
-; --- TMP ----------------------------------------------
-; --- CONDITIONAL ASSEMBLY FLAGS ----------------------------------------------
+; --- STATE RELATED CONSTANTS --------------------------------------------------
 
-; SET THEM TO ZERO TO REMOVE GRAPHICAL "SUGAR" AND GAIN SPEED IF NECESSARY.
+STANONE     EQU     -1                  ; NON-EXISTENT STATE NUMBER
+ISCMAXTM    EQU     500                 ;INTRO SCRREN WAITING CYCLES
+INSMAXTM    EQU     500                 ;INSTRUCTION SCREEN WAITING CYCLES
 
-CASSCRBG    EQU     1                       ; DRAW SCREEN BACKGROUND
-CASFULMM    EQU     1                       ; FULLY DRAW THE MINIMAP
-CASDETTL    EQU     1                       ; USE DETAILED TILES
-CASDETSP    EQU     1                       ; USE DETAILED SPRITES
+;----- VICTORY/DEFEAT CONSTANTS---------------
+
+SCOOUTMX    EQU     32              ;CONDICION DE VICTORIA MATAR A LOS 32 ENEMIGOS
+
+
+
+
+
+
+
+
+
+
 
 
 

@@ -9,9 +9,9 @@ GAMEINIT
 ; MODIFIES : NONE
 ; ------------------------------------------------------------------------------
             MOVEM.L D0-D4/A0-A3,-(A7)
-
+            
+            JSR     DMMINIT
             JSR     SCOINIT
-            JSR     LASBINIT
             JSR     LASINIT
             
             ;CREAR ENEMIGO 1
@@ -39,12 +39,14 @@ GAMEUPD
 ; OUTPUT   : NONE
 ; MODIFIES : NONE
 ; ------------------------------------------------------------------------------
-
-            JSR     LASBUPD
             JSR     PJUPD
             JSR     LASUPD
             JSR     AGLUPD
-            RTS
+            
+            CMP.W   #SCOOUTMX,(SCOOUT)  ;SI SECUMPLE LA CONDICION DE VICTORIA
+            BLT     .DONE
+            MOVE.W  #3,(STANEXT)        ;CAMBIA A STATE 3
+.DONE       RTS
             
 ; ------------------------------------------------------------------------------
 GAMEPLOT
@@ -54,11 +56,39 @@ GAMEPLOT
 ; MODIFIES : NONE
 ; ------------------------------------------------------------------------------
             JSR     SCOPLOT
-            JSR     LASBPLOT
             JSR     PJPLOT
             JSR     LASPLOT
             JSR     AGLPLOT
+            
+            ;COLOR PARA DIBUJAR
+            MOVE.L	#$00FFFFFF,D1	
+            MOVEQ	#80,D0      
+            TRAP	#15       
+	
+            ;Pen fill colour
+            MOVE.L	#$00000000,D1
+            MOVEQ	#81,D0      
+            TRAP	#15     
+	
+            ;ANCHO LINEA
+            MOVEQ	#3,D1	 
+            MOVEQ	#93,D0    
+            TRAP	#15            
+	
+            ;LINEA SUPERIOR
+            MOVE.W	#0,D1             ; x1    
+            MOVE.W	#510,D2             ; y1
+            MOVE.W	#640,D3             ; x2
+            MOVE.W	#510,D4             ; y2
+            MOVEQ	#84,D0  
+            TRAP	#15 
             RTS            
+
+
+
+
+
+
 
 
 

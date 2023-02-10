@@ -13,6 +13,7 @@ SYSINIT
         ;METER EN EL TRAP 0 LA RUTINA PARA ACTUALIZAR LA PANTALLA
         MOVE.L  #SCRPLOT,($80+SCRUPTN*4)
         MOVE.L  #KBDUPD,($80+KBDUPTN*4)
+        MOVE.L  #MOUSEREAD,($80+MOUSETRAP*4)
         MOVE.L  #SNDPLAY,($80+SNDPLTN*4)
         MOVE.L  #SCRTIM,($60+SCRINTN*4)   ;INTERRUPCION #1
         MOVE.L  #FPSCOUNTI,($60+FPSTN*4)  ;INTERRUPCION CONTADOR FRAMES SEC
@@ -41,7 +42,9 @@ SNDINIT
             BEQ     .DONE
             MOVE.L  D0,A1
             
-            MOVE.B  #71,D0
+            ;CHANGE IF DOESNT WORK
+            ;MOVE.B  #73,D0  ;LOAD IN DIRECTX
+            MOVE.B  #71,D0 ;LOAD WAV TO SOUND MEMORY
             TRAP    #15
             ADDQ.B  #1,D1
             BRA     .LOOP
@@ -49,11 +52,9 @@ SNDINIT
 .DONE       MOVEM.L (A7)+,D0-D1/A0-A1
             RTS
             
-.SNDWALL    DC.B    'SND/WALL.wav',0
 .SNDHIT     DC.B    'SND/HIT.wav',0
-.SNDMISS    DC.B    'SND/MISS.wav',0
 .SNDSHOOT   DC.B    'SND/SHOOT.wav',0
-.SNDLIST    DC.L    .SNDWALL,.SNDHIT,.SNDMISS,.SNDSHOOT,0
+.SNDLIST    DC.L    .SNDHIT,.SNDSHOOT,0
 
 ; ----------------------------------------------------------
 SNDPLAY
@@ -64,7 +65,10 @@ SNDPLAY
 ; ----------------------------------------------------------
             MOVEM.W D0-D1,-(A7)
             
-            MOVE.B  #72,D0
+            
+            ;CHANGE TO SOUND MEMORY IF DOESNT WORK
+            ;MOVE.B  #73,D0  ;DIRECTX SOUND
+            MOVE.B  #72,D0 ;SOUND MEMORY
             MOVE.B  D7,D1
             TRAP    #15
             MOVEM.W (A7)+,D0-D1
@@ -239,6 +243,23 @@ KBDUPD
         ROXL.B  #1,D2
         DBRA.W  D3,.LOOP
         RTS
+        
+;------------------------------------------------------------------ 
+MOUSEREAD   MOVEM.L D0-D1,-(A7)
+
+            MOVE.B  #61,D0
+            CLR.B   D1
+            TRAP    #15
+            AND.B   #1,D0
+            MOVE.B  D0,(MOUSEPRESS)
+            MOVE.L  D1,(MOUSEPOS)
+            
+            MOVEM.L (A7)+,D0-D1
+            RTE
+
+
+
+
 
 
 
